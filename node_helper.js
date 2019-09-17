@@ -26,7 +26,7 @@ module.exports = NodeHelper.create({
     //     return search_url
     // },
 
-    socketNotificationReceived: function(notification, key, code) {
+    socketNotificationReceived: function(notification, payload) {
         var self = this
         console.log("Notification: " + notification + " Payload: " + payload);
 
@@ -36,8 +36,8 @@ module.exports = NodeHelper.create({
                 method: 'GET',
                 qs: {
                     'agency': 'CT',
-                    'stopCode': 'code'
-                    'api_key': 'key',
+                    'stopCode': '',
+                    'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
                 }
             }
             request(options, function(err, response, body) {
