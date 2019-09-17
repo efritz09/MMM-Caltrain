@@ -97,7 +97,8 @@ Module.register("MMM-Caltrain", {
     socketNotificationReceived: function(notification, payload) {
     	Log.info("socketNotificationReceived");
         if (notification === "DEBUG") {
-            this.info = payload
+            this.info = "did it work?"
+            Log.info(payload)
             this.updateDom();
         }
     },
