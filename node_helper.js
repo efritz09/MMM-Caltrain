@@ -6,7 +6,7 @@ BASE_URL = 'http://api.511.org/transit/';
 
 module.exports = NodeHelper.create({
     start: function() {
-        console.log("Starting node helper: " + this.name);
+        Log.info("Starting node helper: " + this.name);
     },
 
     // Create a url to get estimated times of depature from the given station
@@ -28,7 +28,7 @@ module.exports = NodeHelper.create({
 
     socketNotificationReceived: function(notification, payload) {
         var self = this
-        console.log("Notification: " + notification + " Payload: " + payload);
+        Log.info("Notification: " + notification + " Payload: " + payload);
 
         if(notification === "StopMonitoring") {
             options = {
@@ -41,7 +41,7 @@ module.exports = NodeHelper.create({
                 }
             }
             request(options, function(err, response, body) {
-                console.log(err, body);
+                Log.info(err, body);
                 self.sendSocketNotification("DEBUG", "did it work?")
             });
         }
