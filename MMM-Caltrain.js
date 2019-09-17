@@ -31,10 +31,12 @@ Module.register("MMM-Caltrain", {
         this.sendSocketNotification("StopMonitoring", {
             config: this.config
         });
+        Log.info()
     },
 
     // Override dom generator.
     getDom: function() {
+    	Log.info("getDom");
         // var wrapper = document.createElement("div");
 
         // if (!this.info) {
@@ -79,7 +81,7 @@ Module.register("MMM-Caltrain", {
         //     });
         // });
 
-        return table;
+        // return table;
     },
 
     // Override get header function
@@ -93,6 +95,7 @@ Module.register("MMM-Caltrain", {
 
     // Override notification handler.
     socketNotificationReceived: function(notification, payload) {
+    	Log.info("socketNotificationReceived");
         if (notification === "DEBUG") {
             this.info = payload
             this.updateDom();
