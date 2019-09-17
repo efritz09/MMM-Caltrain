@@ -28,65 +28,72 @@ Module.register("MMM-Caltrain", {
     getDepartureInfo: function() {
         Log.info("Requesting departure info");
 
-        this.sendSocketNotification("GET_DEPARTURE_TIMES", {
+        this.sendSocketNotification("StopMonitoring", {
             config: this.config
         });
     },
 
     // Override dom generator.
     getDom: function() {
-        var wrapper = document.createElement("div");
+        // var wrapper = document.createElement("div");
 
-        if (!this.info) {
-            wrapper.innerHTML = "LOADING";
-            wrapper.className = "dimmed light small";
-            return wrapper;
-        }
+        // if (!this.info) {
+        //     wrapper.innerHTML = "LOADING";
+        //     wrapper.className = "dimmed light small";
+        //     return wrapper;
+        // }
 
-        var table = document.createElement("table");
-        table.className = "small";
+        // var table = document.createElement("table");
+        // table.className = "small";
+		// var complimentText = this.randomCompliment();
 
-        this.info.trains.forEach(train_name => {
+		var compliment = document.createTextNode(this.info);
+		var wrapper = document.createElement("div");
+		wrapper.className = this.config.classes ? this.config.classes : "thin xlarge bright pre-line";
+		wrapper.appendChild(compliment);
 
-            if (this.config.train_blacklist.includes(train_name)) {
-                console.log('gottem')
-                return;
-            }
+		return wrapper;
+        // this.info.trains.forEach(train_name => {
 
-            var row = document.createElement("tr");
-            table.appendChild(row);
+        //     if (this.config.train_blacklist.includes(train_name)) {
+        //         console.log('gottem')
+        //         return;
+        //     }
 
-            var trainCell = document.createElement("td");
-            trainCell.className = "train";
-            trainCell.innerHTML = train_name;
-            row.appendChild(trainCell);
+        //     var row = document.createElement("tr");
+        //     table.appendChild(row);
 
-            this.info[train_name].forEach( time_to_departure => {
-                var timeCell = document.createElement("td");
-                timeCell.className = "time";
-                if (!isNaN(time_to_departure)) {
-                    time_to_departure += ' min';
-                }
-                timeCell.innerHTML = time_to_departure;
-                row.appendChild(timeCell);
-            });
-        });
+        //     var trainCell = document.createElement("td");
+        //     trainCell.className = "train";
+        //     trainCell.innerHTML = train_name;
+        //     row.appendChild(trainCell);
+
+        //     this.info[train_name].forEach( time_to_departure => {
+        //         var timeCell = document.createElement("td");
+        //         timeCell.className = "time";
+        //         if (!isNaN(time_to_departure)) {
+        //             time_to_departure += ' min';
+        //         }
+        //         timeCell.innerHTML = time_to_departure;
+        //         row.appendChild(timeCell);
+        //     });
+        // });
 
         return table;
     },
 
     // Override get header function
     getHeader: function() {
-        if (this.info) {
-            console.log(this.info.station_name);
-            return this.info.station_name + ' BART Departure Times';
-        }
-        return 'BART Departure Times';
+        // if (this.info) {
+        //     console.log(this.info.station_name);
+        //     return this.info.station_name + ' Caltrain Departure Times';
+        // }
+        return 'Caltrain Departure Times';
     },
 
     // Override notification handler.
     socketNotificationReceived: function(notification, payload) {
-        if (notification === "DEPARTURE_TIMES") {
+        if (notification === "DEBUG") {
             this.info = payload
             this.updateDom();
         }
