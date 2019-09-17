@@ -40,11 +40,16 @@ module.exports = NodeHelper.create({
                     'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
                 }
             }
-            self.sendSocketNotification("DEBUG", options)
-            // request(options, function(err, response, body) {
-            //     console.error(err, body);
-            //     self.sendSocketNotification("DEBUG", "did this work?")
-            // });
+            // self.sendSocketNotification("DEBUG", options)
+            request(options, function(err, response, body) {
+                console.error(err, body);
+                payload = {
+                    'err': err,
+                    'response': response,
+                    'body': body
+                }
+                self.sendSocketNotification("DEBUG", payload)
+            });
         }
 
         // if(notification === "GET_DEPARTURE_TIMES") {

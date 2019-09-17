@@ -4,7 +4,7 @@ Module.register("MMM-Caltrain", {
 	defaults: {
 		key: "fa666f48-2174-4618-a349-97390b7e3e4d",
 		text: "Caltrain Monitor",
-		updateInterval: 30000, // 30 seconds
+		updateInterval: 600000, // 10 minutes
 	},
 
 	// All of this is based on the BART one
