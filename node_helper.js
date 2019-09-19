@@ -43,12 +43,22 @@ module.exports = NodeHelper.create({
             // self.sendSocketNotification("DEBUG", options)
             request(options, function(err, response, body) {
                 console.error(err, body);
-                payload = {
-                    'err': err,
-                    'response': response,
-                    'body': body
+                try {
+                    if (!error && response.statusCode == 200) {
+                        data = JSON.parse(body)
+                        self.sendSocketNotification("DEBUG", data)
+                    }
                 }
-                self.sendSocketNotification("DEBUG", payload)
+                catch(error) {
+                    self.sendSocketNotification("DEBUG", error)
+                }
+                // finally {
+                //     payload = {
+                //         'err': err,
+                //         'response': response,
+                //         'body': data
+                //     }
+                // }
             });
         }
 
