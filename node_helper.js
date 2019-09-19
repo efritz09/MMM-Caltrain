@@ -1,12 +1,13 @@
 var request = require('request');
 var NodeHelper = require("node_helper");
+var zlib = require('zlib');
 // var { URL } = require('url');
 
 BASE_URL = 'http://api.511.org/transit/';
 
 module.exports = NodeHelper.create({
     start: function() {
-        console.error("Starting node helper: " + this.name);
+        console.log("Starting node helper: " + this.name);
     },
 
     // Create a url to get estimated times of depature from the given station
@@ -27,30 +28,36 @@ module.exports = NodeHelper.create({
     // },
 
     socketNotificationReceived: function(notification, payload) {
-        var self = this
-        console.error("Notification: " + notification + " Payload: " + payload);
+        var self = this;
+        console.log("Notification: " + notification + " Payload: " + payload);
 
         if(notification === "StopMonitoring") {
             options = {
                 url: BASE_URL + 'StopMonitoring',
                 method: 'GET',
+                encoding: null,
                 qs: {
                     'agency': 'CT',
                     'stopCode': '',
                     'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
                 }
             }
+            console.log("checkpoint!");
             // self.sendSocketNotification("DEBUG", options)
             request(options, function(err, response, body) {
-                console.error(err, body);
-                try {
-                    if (!error && response.statusCode == 200) {
-                        data = JSON.parse(body)
-                        self.sendSocketNotification("DEBUG", data)
+                console.log("checkpoint! 2");
+                console.log(err, body);
+                if (!err && response.statusCode == 200) {
+                    if(response.headers['content-encoding'] == 'gzip') {
+                        zlib.gunzip(body, function(err, data) {
+                            if(err) {
+                                console.log("ERROR", err);
+                            } else {
+                                console.log(data.toString());
+                            }
+                        });
                     }
-                }
-                catch(error) {
-                    self.sendSocketNotification("DEBUG", error)
+                    self.sendSocketNotification("DEBUG", "data");
                 }
                 // finally {
                 //     payload = {
