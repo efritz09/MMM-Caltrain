@@ -69,24 +69,24 @@ module.exports = NodeHelper.create({
         self.sendSocketNotification("GetStationStatus", station_status);
     },
 
-    getRequest: function(options, callback) {
-        var self = this
-        request(options, function(err, resp, body) {
-            if(!err && resp.statusCode == 200) {
-                if(resp.headers['content-encoding'] == 'gzip') {
-                    zlib.gunzip(body, function(err, result) {
-                        if (err) {
-                            console.log("Error gunzipping: ", err)
-                        } else {
-                            callback(result.toString("utf-8").trim())
-                        }
-                    })
-                }
-            } else {
-                console.log("request error: ", err, resp.statusCode)
-            }
-        })
-    },
+    // getRequest: function(options, callback) {
+    //     var self = this
+    //     request(options, function(err, resp, body) {
+    //         if(!err && resp.statusCode == 200) {
+    //             if(resp.headers['content-encoding'] == 'gzip') {
+    //                 zlib.gunzip(body, function(err, result) {
+    //                     if (err) {
+    //                         console.log("Error gunzipping: ", err)
+    //                     } else {
+    //                         callback(result.toString("utf-8").trim())
+    //                     }
+    //                 })
+    //             }
+    //         } else {
+    //             console.log("request error: ", err, resp.statusCode)
+    //         }
+    //     })
+    // },
 
     CheckForDelays: function(parameters) {
         var self = this
@@ -103,7 +103,23 @@ module.exports = NodeHelper.create({
                 'Content-Type': 'application/json',
             }
         }
-        data = self.getRequest(options, self.CheckForDelaysCallback)
+
+        request(options, function(err, resp, body) {
+            if(!err && resp.statusCode == 200) {
+                if(resp.headers['content-encoding'] == 'gzip') {
+                    zlib.gunzip(body, function(err, result) {
+                        if (err) {
+                            console.log("Error gunzipping: ", err)
+                        } else {
+                            self.CheckForDelaysCallback(result.toString("utf-8").trim())
+                        }
+                    })
+                }
+            } else {
+                console.log("request error: ", err, resp.statusCode)
+            }
+        })
+        // data = self.getRequest(options, )
     },
 
     GetStationStatus: function(parameters) {
@@ -124,6 +140,22 @@ module.exports = NodeHelper.create({
                 'Content-Type': 'application/json',
             }
         }
-        data = self.getRequest(options, self.GetStationStatusCallback)
+        
+        request(options, function(err, resp, body) {
+            if(!err && resp.statusCode == 200) {
+                if(resp.headers['content-encoding'] == 'gzip') {
+                    zlib.gunzip(body, function(err, result) {
+                        if (err) {
+                            console.log("Error gunzipping: ", err)
+                        } else {
+                            self.GetStationStatusCallback(result.toString("utf-8").trim())
+                        }
+                    })
+                }
+            } else {
+                console.log("request error: ", err, resp.statusCode)
+            }
+        })
+        // data = self.getRequest(options, self.GetStationStatusCallback)
     },
 })
