@@ -12,13 +12,13 @@ Module.register("MMM-Caltrain", {
 	start: function() {
 		Log.info("starting module: " + this.name);
 
-		this.getDepartureInfo()
 		this.getDelayInfo()
+		this.getStationInfo()
 
 		// Schedule update timer.
 		setInterval(function() {
-			this.getDepartureInfo()
 			this.getDelayInfo()
+			this.getStationInfo()
 		}, this.config.updateInterval)
 	},
 
