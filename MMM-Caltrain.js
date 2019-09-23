@@ -11,26 +11,36 @@ Module.register("MMM-Caltrain", {
 
 	start: function() {
 		Log.info("starting module: " + this.name);
-		var self = this;
 
 		this.getDepartureInfo()
+		this.getDelayInfo()
 
 		// Schedule update timer.
 		setInterval(function() {
-			self.getDepartureInfo()
-		}, this.config.updateInterval);
+			this.getDepartureInfo()
+			this.getDelayInfo()
+		}, this.config.updateInterval)
 	},
 
 	getStyles: function() {
-		return ["MMM-Caltrain.css"];
+		return ["MMM-Caltrain.css"]
 	},
 
-    getDepartureInfo: function() {
-        Log.info("Requesting departure info");
+    getDelayInfo: function() {
+        Log.info("Requesting delay info")
 
-        this.sendSocketNotification("StopMonitoring", {
+        this.sendSocketNotification("CheckForDelays", {
             config: this.config
-        });
+        })
+        Log.info()
+    },
+
+    getStationInfo: function() {
+    	Log.info("Requesting station info")
+
+        this.sendSocketNotification("GetStationStatus", {
+            config: this.config
+        })
         Log.info()
     },
 
@@ -90,16 +100,22 @@ Module.register("MMM-Caltrain", {
         //     console.log(this.info.station_name);
         //     return this.info.station_name + ' Caltrain Departure Times';
         // }
-        return 'Caltrain Departure Times';
+        return 'Caltrain Departure Times'
     },
 
     // Override notification handler.
-    socketNotificationReceived: function(notification, payload) {
-    	Log.info("socketNotificationReceived");
-        if (notification === "DEBUG") {
-            this.info = "did it work?"
-            Log.info(payload)
-            this.updateDom();
+    socketNotificationReceived: function(query, parameters) {
+    	Log.info("socketNotificationReceived")
+        if (query === "CheckForDelays") {
+        	Log.info("CheckForDelays")
+            this.info = "CheckForDelays"
+            Log.info(parameters)
+            this.updateDom()
+        } else if (query === "GetStationStatus") {
+        	Log.info("GetStationStatus")
+            this.info = "GetStationStatus"
+            Log.info(parameters)
+            this.updateDom()
         }
     },
 

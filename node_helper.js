@@ -1,100 +1,124 @@
-var request = require('request');
-var NodeHelper = require("node_helper");
-var zlib = require('zlib');
-// var { URL } = require('url');
+var request = require('request')
+var NodeHelper = require("node_helper")
+var zlib = require('zlib')
 
-BASE_URL = 'http://api.511.org/transit/';
+const BASE_URL = 'http://api.511.org/transit/'
 
 module.exports = NodeHelper.create({
     start: function() {
         console.log("Starting node helper: " + this.name);
     },
 
-    // Create a url to get estimated times of depature from the given station
-    // using the API key
-    // build_req: function(endpoint, api_key, args) {
-    //     // url = BASE_URL + endpoint;
-    //     // method = 'GET';
-    //     // headers = {
+    socketNotificationReceived: function(query, parameters) {
+        var self = this
+        console.log("Query: " + query + " Parameters: " + parameters)
 
-    //     // }
+        if(query === "CheckForDelays") {
+            CheckForDelays(parameters)
+        } else if(query === "GetStationStatus") {
+            GetStationStatus(parameters)
+        }
+    },
 
-    //     search_url = new URL(BASE_URL);
-    //     search_url.searchParams.set('cmd', 'etd');
-    //     search_url.searchParams.set('json', 'y');
-    //     search_url.searchParams.set('key', key);
-    //     search_url.searchParams.set('orig', station);
-    //     return search_url
-    // },
+    // compare the aimed arrival and expected arrival times to find delays
+    CheckForDelaysCallback: function(raw_json) {
+        var delayed_trains = []
+        json = JSON.parse(raw_json)
+        data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
+        for (var i = 0, len = data.length; i < len; i++) {
+            train = data[i].MonitoredVehicleJourney
+            call = train.MonitoredCall
+            arrive = Date.parse(call.AimedArrivalTime)
+            exp = Date.parse(call.ExpectedArrivalTime)
 
-    socketNotificationReceived: function(notification, payload) {
-        var self = this;
-        console.log("Notification: " + notification + " Payload: " + payload);
-
-        if(notification === "StopMonitoring") {
-            options = {
-                url: BASE_URL + 'StopMonitoring',
-                method: 'GET',
-                encoding: null,
-                qs: {
-                    'agency': 'CT',
-                    'stopCode': '',
-                    'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
-                }
+            if ((exp - arrive) > delay_time) {
+                delayed_trains.push({
+                    train: train.VehicleRef,
+                    stop: call.StopPointName,
+                    dir: train.DirectionRef,
+                    delay: (exp - arrive) / 1000 / 60,
+                })
             }
-            console.log("checkpoint!");
-            // self.sendSocketNotification("DEBUG", options)
-            request(options, function(err, response, body) {
-                console.log("checkpoint! 2");
-                console.log(err, body);
-                if (!err && response.statusCode == 200) {
-                    if(response.headers['content-encoding'] == 'gzip') {
-                        zlib.gunzip(body, function(err, data) {
-                            if(err) {
-                                console.log("ERROR", err);
-                            } else {
-                                console.log(data.toString());
-                            }
-                        });
-                    }
-                    self.sendSocketNotification("DEBUG", "data");
-                }
-                // finally {
-                //     payload = {
-                //         'err': err,
-                //         'response': response,
-                //         'body': data
-                //     }
-                // }
-            });
+        }
+        console.log("CheckForDelaysCallback")
+        self.sendSocketNotification("CheckForDelays", delayed_trains);
+    },
+
+    // returns all reported train statuses for a given station
+    GetStationStatusCallback: function(raw_json) {
+        station_status = []
+        json = JSON.parse(raw_json)
+        data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
+        for (var i = 0, len = data.length; i < len; i++) {
+            train = data[i].MonitoredVehicleJourney
+            call = train.MonitoredCall
+            arrive = Date.parse(call.AimedArrivalTime)
+            exp = Date.parse(call.ExpectedArrivalTime)
+            status = (exp - arrive) / 1000 / 60
+
+            station_status.push({
+                train: train.VehicleRef,
+                delay: status,
+                dir: train.DirectionRef,
+            })
         }
 
-        // if(notification === "GET_DEPARTURE_TIMES") {
-
-        //     var bart_url = this.build_search_url(payload.config.station, payload.config.key);
-
-        //     request(bart_url.href, function (error, response, body) {
-        //         var departure_times = {};
-        //         departure_times.trains = [];
-        //         if (!error && response.statusCode == 200) {
-
-        //             trains = JSON.parse(body).root.station[0];
-        //             departure_times.station_name = trains.name;
-
-        //             trains.etd.forEach(train => {
-        //                 departure_times.trains.push(train.destination);
-        //                 departure_times[train.destination] = [];
-        //                 train.estimate.forEach(est => {
-        //                     departure_times[train.destination].push(est.minutes);
-        //                 })
-        //             });
-        //             console.log("Train times loaded:" + departure_times);
-        //             self.sendSocketNotification("DEPARTURE_TIMES", departure_times);
-        //         }
-        //         else {
-        //             console.log("Bart Loading failed", error, response.statusCode);
-        //         }
-        //     });
-        // }
+        console.log("GetStationStatusCallback")
+        self.sendSocketNotification("GetStationStatus", station_status);
     },
-});
+
+    getRequest: function(options, callback) {
+        request(options, function(err, resp, body) {
+            if(!err && resp.statusCode == 200) {
+                if(resp.headers['content-encoding'] == 'gzip') {
+                    zlib.gunzip(body, function(err, result) {
+                        if (err) {
+                            console.log("Error gunzipping: ", err)
+                        } else {
+                            callback(result.toString("utf-8").trim())
+                        }
+                    })
+                }
+            } else {
+                console.log("request error: ", err, resp.statusCode)
+            }
+        })
+    },
+
+    CheckForDelays: function(parameters) {
+        options = {
+            url: BASE_URL + 'StopMonitoring',
+            method: 'GET',
+            encoding: null,
+            qs: {
+                'agency': 'CT',
+                'stopCode': '',
+                'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
+            },
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }
+        data = getRequest(options, CheckForDelaysCallback)
+    },
+
+    GetStationStatus: function(parameters) {
+        // This can be inaccurate if the train is not set to arrive soon. It may be
+        // good to threshold this somewhere. Perhaps list the upcomming trains but
+        // don't display the status until it's close to the station
+        options = {
+            url: BASE_URL + 'StopMonitoring',
+            method: 'GET',
+            encoding: null,
+            qs: {
+                'agency': 'CT',
+                'stopCode': '70112',
+                'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
+            },
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }
+        data = getRequest(options, GetStationStatusCallback)
+    },
+})
