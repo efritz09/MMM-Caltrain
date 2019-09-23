@@ -14,14 +14,15 @@ module.exports = NodeHelper.create({
         console.log("Query: " + query + " Parameters: " + parameters)
 
         if(query === "CheckForDelays") {
-            CheckForDelays(parameters)
+            self.CheckForDelays(parameters)
         } else if(query === "GetStationStatus") {
-            GetStationStatus(parameters)
+            self.GetStationStatus(parameters)
         }
     },
 
     // compare the aimed arrival and expected arrival times to find delays
     CheckForDelaysCallback: function(raw_json) {
+        var self = this
         var delayed_trains = []
         json = JSON.parse(raw_json)
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
@@ -46,6 +47,7 @@ module.exports = NodeHelper.create({
 
     // returns all reported train statuses for a given station
     GetStationStatusCallback: function(raw_json) {
+        var self = this
         station_status = []
         json = JSON.parse(raw_json)
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
@@ -68,6 +70,7 @@ module.exports = NodeHelper.create({
     },
 
     getRequest: function(options, callback) {
+        var self = this
         request(options, function(err, resp, body) {
             if(!err && resp.statusCode == 200) {
                 if(resp.headers['content-encoding'] == 'gzip') {
@@ -86,6 +89,7 @@ module.exports = NodeHelper.create({
     },
 
     CheckForDelays: function(parameters) {
+        var self = this
         options = {
             url: BASE_URL + 'StopMonitoring',
             method: 'GET',
@@ -99,13 +103,14 @@ module.exports = NodeHelper.create({
                 'Content-Type': 'application/json',
             }
         }
-        data = getRequest(options, CheckForDelaysCallback)
+        data = self.getRequest(options, self.CheckForDelaysCallback)
     },
 
     GetStationStatus: function(parameters) {
         // This can be inaccurate if the train is not set to arrive soon. It may be
         // good to threshold this somewhere. Perhaps list the upcomming trains but
         // don't display the status until it's close to the station
+        var self = this
         options = {
             url: BASE_URL + 'StopMonitoring',
             method: 'GET',
@@ -119,6 +124,6 @@ module.exports = NodeHelper.create({
                 'Content-Type': 'application/json',
             }
         }
-        data = getRequest(options, GetStationStatusCallback)
+        data = self.getRequest(options, self.GetStationStatusCallback)
     },
 })
