@@ -90,20 +90,21 @@ Module.register("MMM-Caltrain", {
 
                 var train_delay = document.createElement("td");
                 train_delay.className = "train_delay";
-                train_delay.innerHTML = t.delay;
+                train_delay.innerHTML = t.delay + " min";
                 row.appendChild(train_delay);
             }
             wrapper.appendChild(table);
         }
 
         if (this.station.length > 0) {
-            var head = document.createTextNode(this.config.station_name);
-            head.className = "small";
-            wrapper.appendChild(head);
+            // var head = document.createTextNode(this.config.station_name);
+            // head.className = "small";
+            // wrapper.appendChild(head);
 
             var south_table = document.createElement("table");
             var north_table = document.createElement("table");
-            table.className = "small";
+            south_table.className = "small";
+            north_table.className = "small";
             for (var i = 0, len = this.station.length; i < len; i++) {
                 var t = this.station[i];
                 console.log("appending: ", t);
@@ -119,14 +120,14 @@ Module.register("MMM-Caltrain", {
                 train_name.innerHTML = t.train;
                 row.appendChild(train_name);
 
-                var train_dir = document.createElement("td");
-                train_dir.className = "train_dir";
-                train_dir.innerHTML = t.dir;
-                row.appendChild(train_dir);
+                var train_line = document.createElement("td");
+                train_line.className = "line";
+                train_line.innerHTML = t.line;
+                row.appendChild(train_line);
 
                 var train_delay = document.createElement("td");
                 train_delay.className = "train_delay";
-                train_delay.innerHTML = t.delay;
+                train_delay.innerHTML = t.delay + " min";
                 row.appendChild(train_delay);
             }
 
