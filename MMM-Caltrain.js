@@ -7,6 +7,8 @@ Module.register("MMM-Caltrain", {
 		updateInterval: 600000, // 10 minutes
 	},
 
+	timetables: {}
+
 	// All of this is based on the BART one
 
 	start: function() {
@@ -33,7 +35,20 @@ Module.register("MMM-Caltrain", {
 	getDaySchedule: function() {
 		Log.info("Requesting day schedule")
 		this.sendSocketNotification("GetDaySchedule", {
-			config: this.config
+			config: this.config,
+			line_type: "Bullet",
+		})
+		this.sendSocketNotification("GetDaySchedule", {
+			config: this.config,
+			line_type: "Limited",
+		})
+		this.sendSocketNotification("GetDaySchedule", {
+			config: this.config,
+			line_type: "Local",
+		})
+		this.sendSocketNotification("GetDaySchedule", {
+			config: this.config,
+			line_type: "Special",
 		})
 	}
 
@@ -127,7 +142,11 @@ Module.register("MMM-Caltrain", {
         	Log.info("GetDaySchedule")
             this.info = "GetDaySchedule"
             Log.info(value)
-            this.updateDom()
+            route = value.ServiceFrame.routes.Route[0].LineRef.ref
+            Log.info(route)
+            this.timetables[route] = value
+            Log.info(this.timetables)
+            // this.updateDom()
         } else if (query === "DEBUG") {
         	Log.debug(value)
         }

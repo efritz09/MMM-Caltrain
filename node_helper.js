@@ -80,7 +80,7 @@ module.exports = NodeHelper.create({
     },
 
     getDayScheduleCallback: function(data) {
-        json = JSON.parse(raw_json)
+        json = JSON.parse(data)
         console.log("GetDayScheduleCallback")
         self.sendSocketNotification("GetDaySchedule", json.Content)
     },
@@ -152,7 +152,7 @@ module.exports = NodeHelper.create({
             encoding: null,
             qs: {
                 'Operator_id': 'CT',
-                'Line_id': line_type,
+                'Line_id': parameters.line_type,
                 'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
             },
             headers: {
