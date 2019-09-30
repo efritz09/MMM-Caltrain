@@ -130,7 +130,7 @@ Module.register("MMM-Caltrain", {
 
                 var train_delay = document.createElement("td");
                 train_delay.className = "train_delay";
-                if (train_delay <= 0) {
+                if (t.delay <= 0) {
                     train_delay.innerHTML = "On Time"
                 } else {
                     train_delay.innerHTML = t.delay + " min";
