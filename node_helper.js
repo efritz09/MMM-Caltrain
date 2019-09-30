@@ -16,12 +16,13 @@ module.exports = NodeHelper.create({
         var self = this
         console.log("Query: " + query + " Parameters: " + parameters)
         var options
+        self.sendSocketNotification("echo", query);
         if(query === "CheckForDelays") {
             options = self.buildCheckForDelays(parameters)
         } else if(query === "GetStationStatus") {
             options = self.buildGetStationStatus(parameters)
-        } else if (query === "GetDaySchedule") {
-            options = self.buildGetDaySchedule(parameters)
+        // } else if (query === "GetDaySchedule") {
+        //     options = self.buildGetDaySchedule(parameters)
         } else {
             self.sendSocketNotification("Unknown query", query);
             return
@@ -49,8 +50,8 @@ module.exports = NodeHelper.create({
             self.checkForDelaysCallback(data)
         } else if(query === "GetStationStatus") {
             self.getStationStatusCallback(data)
-        } else if(query === "GetDaySchedule") {
-            self.getDayScheduleCallback(data)
+        // } else if(query === "GetDaySchedule") {
+        //     self.getDayScheduleCallback(data)
         } else {
             console.log(data)
         }
@@ -82,11 +83,11 @@ module.exports = NodeHelper.create({
         self.sendSocketNotification("CheckForDelays", delayed_trains);
     },
 
-    getDayScheduleCallback: function(data) {
-        json = JSON.parse(data)
-        console.log("GetDayScheduleCallback")
-        self.sendSocketNotification("GetDaySchedule", json.Content)
-    },
+    // getDayScheduleCallback: function(data) {
+    //     json = JSON.parse(data)
+    //     console.log("GetDayScheduleCallback")
+    //     self.sendSocketNotification("GetDaySchedule", json.Content)
+    // },
 
     // returns all reported train statuses for a given station
     getStationStatusCallback: function(data) {
@@ -147,20 +148,20 @@ module.exports = NodeHelper.create({
         }
     },
 
-    buildGetDaySchedule: function(parameters) {
-        // This should only be run once per day, preferably in the morning
-        return {
-            url: BASE_URL + 'timetable',
-            method: 'GET',
-            encoding: null,
-            qs: {
-                'Operator_id': 'CT',
-                'Line_id': parameters.line_type,
-                'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
-            },
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }
-    },
+    // buildGetDaySchedule: function(parameters) {
+    //     // This should only be run once per day, preferably in the morning
+    //     return {
+    //         url: BASE_URL + 'timetable',
+    //         method: 'GET',
+    //         encoding: null,
+    //         qs: {
+    //             'Operator_id': 'CT',
+    //             'Line_id': parameters.line_type,
+    //             'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
+    //         },
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         }
+    //     }
+    // },
 })
