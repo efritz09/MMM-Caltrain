@@ -5,9 +5,8 @@ Module.register("MMM-Caltrain", {
 		key: "fa666f48-2174-4618-a349-97390b7e3e4d",
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
+        timetables: {},
 	},
-
-	timetables: {}
 
 	// All of this is based on the BART one
 
@@ -16,8 +15,8 @@ Module.register("MMM-Caltrain", {
 		self = this
 
 		self.getDaySchedule()
-		self.getDelayInfo()
-		self.getStationInfo()
+		// self.getDelayInfo()
+		// self.getStationInfo()
 
 		// Schedule update timer.
 		setInterval(function() {
@@ -122,7 +121,7 @@ Module.register("MMM-Caltrain", {
         //     console.log(this.info.station_name);
         //     return this.info.station_name + ' Caltrain Departure Times';
         // }
-        return 'Caltrain Departure Times'
+        return "Caltrain Departure Times"
     },
 
     // Override notification handler.
@@ -144,8 +143,8 @@ Module.register("MMM-Caltrain", {
             Log.info(value)
             route = value.ServiceFrame.routes.Route[0].LineRef.ref
             Log.info(route)
-            this.timetables[route] = value
-            Log.info(this.timetables)
+            this.config.timetables[route] = value
+            Log.info(this.config.timetables)
             // this.updateDom()
         } else if (query === "DEBUG") {
         	Log.debug(value)
