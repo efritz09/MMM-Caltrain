@@ -5,7 +5,8 @@ Module.register("MMM-Caltrain", {
 		key: "fa666f48-2174-4618-a349-97390b7e3e4d",
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
-        station_name: "Hillsdale" // should abstract this to a code?
+        station_name: "Hillsdale", // should abstract this to a code?
+        station_code: "70112",
 	},
 
 	start: function() {

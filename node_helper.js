@@ -105,14 +105,13 @@ module.exports = NodeHelper.create({
     },
 
     buildCheckForDelays: function(parameters) {
-        this.sendSocketNotification("parameters", parameters);
         return options = {
             url: BASE_URL + "StopMonitoring",
             method: "GET",
             encoding: null,
             qs: {
                 "agency": "CT",
-                "api_key": "fa666f48-2174-4618-a349-97390b7e3e4d", // TODO: abstract this in parameters
+                "api_key": parameters.key,
             },
             headers: {
                 "Content-Type": "application/json",
@@ -124,15 +123,14 @@ module.exports = NodeHelper.create({
         // This can be inaccurate if the train is not set to arrive soon. It may be
         // good to threshold this somewhere. Perhaps list the upcomming trains but
         // don't display the status until it"s close to the station
-        this.sendSocketNotification("parameters", parameters);
         return options = {
             url: BASE_URL + "StopMonitoring",
             method: "GET",
             encoding: null,
             qs: {
                 "agency": "CT",
-                "stopCode": "70112",
-                "api_key": "fa666f48-2174-4618-a349-97390b7e3e4d", // TODO: abstract this in parameters
+                "stopCode": parameters.station_code,
+                "api_key": parameters.key,
             },
             headers: {
                 "Content-Type": "application/json",
