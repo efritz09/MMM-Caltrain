@@ -122,13 +122,19 @@ Module.register("MMM-Caltrain", {
 
                 var train_arrive = document.createElement("td");
                 train_arrive.className = "arrive";
-                d = new Date(t.arrive)
-                train_arrive.innerHTML = d.toLocaleTimeString("en-US");
+                var d = new Date(t.arrive);
+                var hours = d.getHours() % 12
+                var minutes = d.getMinutes()
+                train_arrive.innerHTML = hours + ":" + minutes;
                 row.appendChild(train_arrive);
 
                 var train_delay = document.createElement("td");
                 train_delay.className = "train_delay";
-                train_delay.innerHTML = t.delay + " min";
+                if (train_delay <= 0) {
+                    train_delay.innerHTML = "On Time"
+                } else {
+                    train_delay.innerHTML = t.delay + " min";
+                }
                 row.appendChild(train_delay);
             }
 
