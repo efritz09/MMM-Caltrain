@@ -40,11 +40,11 @@ module.exports = NodeHelper.create({
         })
     },
 
-    requestHandler(query, data) {
+    requestHandler: function(query, data) {
         if(query === "CheckForDelays") {
-            options = self.checkForDelaysCallback(data)
+            options = this.checkForDelaysCallback(data)
         } else if(query === "GetStationStatus") {
-            options = self.getStationStatusCallback(data)
+            options = this.getStationStatusCallback(data)
         }
     }
 
