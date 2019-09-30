@@ -30,7 +30,7 @@ module.exports = NodeHelper.create({
                         if (err) {
                             console.log("Error gunzipping: ", err)
                         } else {
-                            requestHandler(query, result.toString("utf-8").trim())
+                            self.requestHandler(query, result.toString("utf-8").trim())
                         }
                     })
                 }
@@ -46,7 +46,7 @@ module.exports = NodeHelper.create({
         } else if(query === "GetStationStatus") {
             options = this.getStationStatusCallback(data)
         }
-    }
+    },
 
     // compare the aimed arrival and expected arrival times to find delays
     checkForDelaysCallback: function(data) {

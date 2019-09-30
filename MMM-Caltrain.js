@@ -12,54 +12,86 @@ Module.register("MMM-Caltrain", {
 	start: function() {
 		Log.info("starting module: " + this.name);
 
-		this.getDelayInfo()
-		this.getStationInfo()
+        this.loaded = false;
+        this.delays = null;
+        this.station = null;
+
+
+		this.getDelayInfo();
+		this.getStationInfo();
 
 		// Schedule update timer.
 		setInterval(function() {
-			this.getDelayInfo()
-			this.getStationInfo()
-		}, this.config.updateInterval)
+			this.getDelayInfo();
+			this.getStationInfo();
+		}, this.config.updateInterval);
 	},
 
 	getStyles: function() {
-		return ["MMM-Caltrain.css"]
+		return ["MMM-Caltrain.css"];
 	},
 
     getDelayInfo: function() {
-        Log.info("Requesting delay info")
-
+        Log.info("Requesting delay info");
         this.sendSocketNotification("CheckForDelays", {
             config: this.config
-        })
-        Log.info()
+        });
     },
 
     getStationInfo: function() {
-    	Log.info("Requesting station info")
-
+    	Log.info("Requesting station info");
         this.sendSocketNotification("GetStationStatus", {
             config: this.config
-        })
-        Log.info()
+        });
     },
 
     // Override dom generator.
     getDom: function() {
     	Log.info("getDom");
-        // var wrapper = document.createElement("div");
+        var wrapper = document.createElement("div");
 
-        // if (!this.info) {
-        //     wrapper.innerHTML = "LOADING";
-        //     wrapper.className = "dimmed light small";
-        //     return wrapper;
-        // }
+        if (!this.loaded) {
+            wrapper.innerHTML = "LOADING";
+            wrapper.className = "dimmed light small";
+            return wrapper;
+        }
+
+        if (this.delays) {
+            var table = document.createElement("table");
+            table.className = "small";
+            for (var i = 0, len = this.delays.length; i < len; i++) {
+                var t = this.delays[i]
+                console.log("appending: ", t)
+                var row = document.createElement("tr");
+                table.appendChild(row);
+
+                var train_name = document.createElement("td");
+                train_name.className = "train";
+                train_name.innerHTML = t.train;
+                row.appendChild(train_name);
+
+                var train_dir = document.createElement("td");
+                train_dir.className = "train_dir";
+                train_dir.innerHTML = t.dir;
+                row.appendChild(train_dir);
+
+                var train_stop = document.createElement("td");
+                train_stop.className = "train_stop";
+                train_stop.innerHTML = t.stop;
+                row.appendChild(train_stop);
+
+                var train_delay = document.createElement("td");
+                train_delay.className = "train_delay";
+                train_delay.innerHTML = t.delay;
+                row.appendChild(train_delay);
+            }
+        }
 
         // var table = document.createElement("table");
         // table.className = "small";
 		// var complimentText = this.randomCompliment();
 
-		var compliment = document.createTextNode(this.info);
+		var compliment = document.createTextNode("test");
 		var wrapper = document.createElement("div");
 		wrapper.className = this.config.classes ? this.config.classes : "thin xlarge bright pre-line";
 		wrapper.appendChild(compliment);
@@ -100,25 +132,27 @@ Module.register("MMM-Caltrain", {
         //     console.log(this.info.station_name);
         //     return this.info.station_name + " Caltrain Departure Times";
         // }
-        return "Caltrain Departure Times"
+        return "Caltrain Departure Times";
     },
 
     // Override notification handler.
-    socketNotificationReceived: function(query, parameters) {
+    socketNotificationReceived: function(query, value) {
     	Log.info("socketNotificationReceived")
         if (query === "CheckForDelays") {
-        	Log.info("CheckForDelays")
-            this.info = "CheckForDelays"
-            Log.info(parameters)
-            this.updateDom()
+        	Log.info("CheckForDelays");
+            this.delays = value;
+            Log.info(value);
+            this.loaded = true;
+            this.updateDom();
         } else if (query === "GetStationStatus") {
-        	Log.info("GetStationStatus")
-            this.info = "GetStationStatus"
-            Log.info(parameters)
-            this.updateDom()
+        	Log.info("GetStationStatus");
+            this.station = value;
+            Log.info(value);
+            this.loaded = true;
+            this.updateDom();
         } else {
-            Log.info(query)
-            Log.info(parameters)
+            Log.info(query);
+            Log.info(value);
         }
     },
 
