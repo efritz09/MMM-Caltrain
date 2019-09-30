@@ -5,6 +5,7 @@ Module.register("MMM-Caltrain", {
 		key: "fa666f48-2174-4618-a349-97390b7e3e4d",
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
+        station_name: "Hillsdale"
 	},
 
 	// All of this is based on the BART one
@@ -15,7 +16,6 @@ Module.register("MMM-Caltrain", {
         this.loaded = false;
         this.delays = null;
         this.station = null;
-
 
 		this.getDelayInfo();
 		this.getStationInfo();
@@ -56,16 +56,20 @@ Module.register("MMM-Caltrain", {
             return wrapper;
         }
         
-        var compliment = document.createTextNode("test");
-        wrapper.className = this.config.classes ? this.config.classes : "thin xlarge bright pre-line";
-        wrapper.appendChild(compliment);
+        // var compliment = document.createTextNode("test");
+        // wrapper.className = this.config.classes ? this.config.classes : "thin xlarge bright pre-line";
+        // wrapper.appendChild(compliment);
 
-        if (this.delays) {
+        if (this.delays.length > 0) {
+            var head = document.createTextNode("WARNING: Delays Reported");
+            head.className = "small";
+            wrapper.appendChild(head);
+
             var table = document.createElement("table");
             table.className = "small";
             for (var i = 0, len = this.delays.length; i < len; i++) {
-                var t = this.delays[i]
-                console.log("appending: ", t)
+                var t = this.delays[i];
+                console.log("appending: ", t);
                 var row = document.createElement("tr");
                 table.appendChild(row);
 
@@ -91,6 +95,52 @@ Module.register("MMM-Caltrain", {
             }
             wrapper.appendChild(table);
         }
+
+        if (this.station.length > 0) {
+            var head = document.createTextNode(this.config.station_name);
+            head.className = "small";
+            wrapper.appendChild(head);
+
+            var south_table = document.createElement("table");
+            var north_table = document.createElement("table");
+            table.className = "small";
+            for (var i = 0, len = this.station.length; i < len; i++) {
+                var t = this.station[i];
+                console.log("appending: ", t);
+                var row = document.createElement("tr");
+                if (t.dir === "South") {
+                    south_table.appendChild(row);
+                } else if (t.dir === "North") {
+                    north_table.appendChild(row);
+                }
+
+                var train_name = document.createElement("td");
+                train_name.className = "train";
+                train_name.innerHTML = t.train;
+                row.appendChild(train_name);
+
+                var train_dir = document.createElement("td");
+                train_dir.className = "train_dir";
+                train_dir.innerHTML = t.dir;
+                row.appendChild(train_dir);
+
+                var train_delay = document.createElement("td");
+                train_delay.className = "train_delay";
+                train_delay.innerHTML = t.delay;
+                row.appendChild(train_delay);
+            }
+
+            var north_head = document.createTextNode("Northbound");
+            north_head.className = "small";
+            wrapper.appendChild(north_head)
+            wrapper.appendChild(north_table);
+
+            var south_head = document.createTextNode("Southbound");
+            south_head.className = "small";
+            wrapper.appendChild(south_head)
+            wrapper.appendChild(south_table);
+        }
+
         return wrapper;
 
         // var table = document.createElement("table");
