@@ -125,6 +125,11 @@ Module.register("MMM-Caltrain", {
                 train_line.innerHTML = t.line;
                 row.appendChild(train_line);
 
+                var train_arrive = document.createElement("td");
+                train_arrive.className = "arrive";
+                train_arrive.innerHTML = t.arrive;
+                row.appendChild(train_arrive);
+
                 var train_delay = document.createElement("td");
                 train_delay.className = "train_delay";
                 train_delay.innerHTML = t.delay + " min";
