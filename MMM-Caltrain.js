@@ -14,8 +14,8 @@ Module.register("MMM-Caltrain", {
 		Log.info("starting module: " + this.name);
 
         this.loaded = false;
-        this.delays = null;
-        this.station = null;
+        this.delays = [];
+        this.station = [];
 
 		this.getDelayInfo();
 		this.getStationInfo();
