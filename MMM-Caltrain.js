@@ -127,7 +127,7 @@ Module.register("MMM-Caltrain", {
 
                 var train_arrive = document.createElement("td");
                 train_arrive.className = "arrive";
-                train_arrive.innerHTML = t.arrive;
+                train_arrive.innerHTML = t.arrive.toLocaleTimeString();
                 row.appendChild(train_arrive);
 
                 var train_delay = document.createElement("td");

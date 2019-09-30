@@ -96,7 +96,7 @@ module.exports = NodeHelper.create({
                 delay: status,
                 dir: train.DirectionRef,
                 line: train.LineRef,
-                time: arrive,
+                arrive: arrive,
             })
         }
 
