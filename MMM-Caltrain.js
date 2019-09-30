@@ -5,7 +5,7 @@ Module.register("MMM-Caltrain", {
 		key: "fa666f48-2174-4618-a349-97390b7e3e4d",
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
-        timetables: {},
+        // timetables: {},
 	},
 
 	// All of this is based on the BART one
@@ -14,9 +14,9 @@ Module.register("MMM-Caltrain", {
 		Log.info("starting module: " + this.name);
 		self = this
 
-		self.getDaySchedule()
-		// self.getDelayInfo()
-		// self.getStationInfo()
+		// self.getDaySchedule()
+		self.getDelayInfo()
+		self.getStationInfo()
 
 		// Schedule update timer.
 		setInterval(function() {
@@ -31,25 +31,29 @@ Module.register("MMM-Caltrain", {
 		return ["MMM-Caltrain.css"]
 	},
 
-	getDaySchedule: function() {
-		Log.info("Requesting day schedule")
-		this.sendSocketNotification("GetDaySchedule", {
-			config: this.config,
-			line_type: "Bullet",
-		})
-		this.sendSocketNotification("GetDaySchedule", {
-			config: this.config,
-			line_type: "Limited",
-		})
-		this.sendSocketNotification("GetDaySchedule", {
-			config: this.config,
-			line_type: "Local",
-		})
-		this.sendSocketNotification("GetDaySchedule", {
-			config: this.config,
-			line_type: "Special",
-		})
-	}
+	// getDaySchedule: function() {
+ //        // Doesn't appear to work as expected... ignore for now
+	// 	Log.info("Requesting bullet schedule")
+	// 	this.sendSocketNotification("GetDaySchedule", {
+	// 		config: this.config,
+	// 		line_type: "Bullet",
+	// 	})
+ //        Log.info("Requesting Limited schedule")
+	// 	this.sendSocketNotification("GetDaySchedule", {
+	// 		config: this.config,
+	// 		line_type: "Limited",
+	// 	})
+ //        Log.info("Requesting local schedule")
+	// 	this.sendSocketNotification("GetDaySchedule", {
+	// 		config: this.config,
+	// 		line_type: "Local",
+	// 	})
+ //        Log.info("Requesting special schedule")
+	// 	this.sendSocketNotification("GetDaySchedule", {
+	// 		config: this.config,
+	// 		line_type: "Special",
+	// 	})
+	// },
 
     getDelayInfo: function() {
         Log.info("Requesting delay info")
@@ -137,16 +141,16 @@ Module.register("MMM-Caltrain", {
             this.info = "GetStationStatus"
             Log.info(value)
             this.updateDom()
-        } else if (query === "GetDaySchedule") {
-        	Log.info("GetDaySchedule")
-            this.info = "GetDaySchedule"
-            Log.info(value)
-            route = value.ServiceFrame.routes.Route[0].LineRef.ref
-            Log.info(route)
-            this.config.timetables[route] = value
-            Log.info(this.config.timetables)
-            // this.updateDom()
-        } else if (query === "DEBUG") {
+        // } else if (query === "GetDaySchedule") {
+        // 	Log.info("GetDaySchedule")
+        //     this.info = "GetDaySchedule"
+        //     Log.info(value)
+        //     route = value.ServiceFrame.routes.Route[0].LineRef.ref
+        //     Log.info(route)
+        //     this.config.timetables[route] = value
+        //     Log.info(this.config.timetables)
+        //     // this.updateDom()
+        } else {
         	Log.debug(value)
         }
     },

@@ -22,6 +22,9 @@ module.exports = NodeHelper.create({
             options = self.buildGetStationStatus(parameters)
         } else if (query === "GetDaySchedule") {
             options = self.buildGetDaySchedule(parameters)
+        } else {
+            self.sendSocketNotification("Unknown query", query);
+            return
         }
 
         request(options, function(err, resp, body) {
