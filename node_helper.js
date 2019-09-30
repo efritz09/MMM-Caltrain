@@ -60,6 +60,7 @@ module.exports = NodeHelper.create({
             call = train.MonitoredCall
             arrive = Date.parse(call.AimedArrivalTime)
             exp = Date.parse(call.ExpectedArrivalTime)
+            self.sendSocketNotification("delay call", call);
 
             if ((exp - arrive) > delay_time) {
                 delayed_trains.push({
@@ -84,9 +85,11 @@ module.exports = NodeHelper.create({
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney
             call = train.MonitoredCall
+            // check these?
             arrive = Date.parse(call.AimedArrivalTime)
             exp = Date.parse(call.ExpectedArrivalTime)
             status = Math.round((exp - arrive) / 1000 / 60)
+            self.sendSocketNotification("station call", call);
 
             station_status.push({
                 train: train.VehicleRef,
