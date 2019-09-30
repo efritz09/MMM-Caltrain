@@ -96,7 +96,7 @@ module.exports = NodeHelper.create({
                 delay: status,
                 dir: train.DirectionRef,
                 line: train.LineRef,
-                arrive: arrive,
+                arrive: arrive.toLocaleTimeString(),
             })
         }
 
