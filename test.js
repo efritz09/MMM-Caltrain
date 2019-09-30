@@ -24,12 +24,10 @@ function run(query, parameters) {
     var options
     if(query === "CheckForDelays") {
         options = BuildCheckForDelays(parameters)
-        // CheckForDelays
-
-        // self.CheckForDelays(query, parameters)
     } else if(query === "GetStationStatus") {
         options = BuildGetStationStatus(parameters)
-        // self.GetStationStatus(query, parameters)
+    } else if(query === "GetDaySchedule") {
+        options = BuildGetDaySchedule(parameters)
     }
     console.log(options)
 
@@ -52,16 +50,20 @@ function run(query, parameters) {
 }
 
 function callback(query, raw_json) {
-	console.log(raw_json)
     if(query === "CheckForDelays") {
         CheckForDelaysCallback(raw_json)
-        // CheckForDelays
-
-        // self.CheckForDelays(query, parameters)
     } else if(query === "GetStationStatus") {
         GetStationStatusCallback(raw_json)
-        // self.GetStationStatus(query, parameters)
+    } else if(query === "GetDaySchedule") {
+    	GetDayScheduleCallback(raw_json)
+    } else {
+		console.log(raw_json)
     }
+}
+
+function GetDayScheduleCallback(raw_json) {
+	json = JSON.parse(raw_json)
+	SomeCallbackHere(json.Content)
 }
 
 // compare the aimed arrival and expected arrival times to find delays
@@ -149,7 +151,29 @@ function BuildGetStationStatus() {
 	return options
 }
 
-run("CheckForDelays", "")
+function BuildGetDaySchedule(line_type) {
+	// This should only be run once per day, preferably in the morning
+	options = {
+	    url: BASE_URL + 'timetable',
+	    method: 'GET',
+	    encoding: null,
+	    qs: {
+	        'Operator_id': 'CT',
+	        'Line_id': line_type,
+	        'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
+	    },
+	    headers: {
+	    	'Content-Type': 'application/json',
+	    }
+	}
+	return options
+
+}
+
+// run("CheckForDelays", "")
 // run("GetStationStatus", "")
-// CheckForDelays()
-// GetStationStatus()
+run("GetDaySchedule", "Bullet")
+// run("GetDaySchedule", "Limited")
+// run("GetDaySchedule", "Local")
+// run("GetDaySchedule", "Special")
+

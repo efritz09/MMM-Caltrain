@@ -11,37 +11,44 @@ Module.register("MMM-Caltrain", {
 
 	start: function() {
 		Log.info("starting module: " + this.name);
+		self = this
 
-		this.getDelayInfo()
-		this.getStationInfo()
+		self.getDaySchedule()
+		self.getDelayInfo()
+		self.getStationInfo()
 
 		// Schedule update timer.
 		setInterval(function() {
-			this.getDelayInfo()
-			this.getStationInfo()
-		}, this.config.updateInterval)
+			self.getDelayInfo()
+			self.getStationInfo()
+		}, self.config.updateInterval)
+
+		// TODO: daily day schedule get (weekly?)
 	},
 
 	getStyles: function() {
 		return ["MMM-Caltrain.css"]
 	},
 
+	getDaySchedule: function() {
+		Log.info("Requesting day schedule")
+		this.sendSocketNotification("GetDaySchedule", {
+			config: this.config
+		})
+	}
+
     getDelayInfo: function() {
         Log.info("Requesting delay info")
-
         this.sendSocketNotification("CheckForDelays", {
             config: this.config
         })
-        Log.info()
     },
 
     getStationInfo: function() {
     	Log.info("Requesting station info")
-
         this.sendSocketNotification("GetStationStatus", {
             config: this.config
         })
-        Log.info()
     },
 
     // Override dom generator.
@@ -104,18 +111,25 @@ Module.register("MMM-Caltrain", {
     },
 
     // Override notification handler.
-    socketNotificationReceived: function(query, parameters) {
+    socketNotificationReceived: function(query, value) {
     	Log.info("socketNotificationReceived")
         if (query === "CheckForDelays") {
         	Log.info("CheckForDelays")
             this.info = "CheckForDelays"
-            Log.info(parameters)
+            Log.info(value)
             this.updateDom()
         } else if (query === "GetStationStatus") {
         	Log.info("GetStationStatus")
             this.info = "GetStationStatus"
-            Log.info(parameters)
+            Log.info(value)
             this.updateDom()
+        } else if (query === "GetDaySchedule") {
+        	Log.info("GetDaySchedule")
+            this.info = "GetDaySchedule"
+            Log.info(value)
+            this.updateDom()
+        } else if (query === "DEBUG") {
+        	Log.debug(value)
         }
     },
 

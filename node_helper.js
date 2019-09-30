@@ -20,6 +20,8 @@ module.exports = NodeHelper.create({
             options = self.buildCheckForDelays(parameters)
         } else if(query === "GetStationStatus") {
             options = self.buildGetStationStatus(parameters)
+        } else if (query === "GetDaySchedule") {
+            options = self.buildGetDaySchedule(parameters)
         }
 
         request(options, function(err, resp, body) {
@@ -41,12 +43,15 @@ module.exports = NodeHelper.create({
 
     requestHandler(query, data) {
         if(query === "CheckForDelays") {
-            options = self.checkForDelaysCallback(data)
+            self.checkForDelaysCallback(data)
         } else if(query === "GetStationStatus") {
-            options = self.getStationStatusCallback(data)
+            self.getStationStatusCallback(data)
+        } else if(query === "GetDaySchedule") {
+            self.getDayScheduleCallback(data)
+        } else {
+            console.log(data)
         }
-
-    }
+    },
 
     // compare the aimed arrival and expected arrival times to find delays
     checkForDelaysCallback: function(data) {
@@ -54,12 +59,13 @@ module.exports = NodeHelper.create({
         var delayed_trains = []
         json = JSON.parse(data)
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
+        self.sendSocketNotification("CheckForDelays", delayed_trains);
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney
             call = train.MonitoredCall
             arrive = Date.parse(call.AimedArrivalTime)
             exp = Date.parse(call.ExpectedArrivalTime)
-
+            self.sendSocketNotification("CheckForDelays", train)
             if ((exp - arrive) > delay_time) {
                 delayed_trains.push({
                     train: train.VehicleRef,
@@ -73,12 +79,19 @@ module.exports = NodeHelper.create({
         self.sendSocketNotification("CheckForDelays", delayed_trains);
     },
 
+    getDayScheduleCallback: function(data) {
+        json = JSON.parse(raw_json)
+        console.log("GetDayScheduleCallback")
+        self.sendSocketNotification("GetDaySchedule", json.Content)
+    },
+
     // returns all reported train statuses for a given station
     getStationStatusCallback: function(data) {
         var self = this
         station_status = []
         json = JSON.parse(data)
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
+        self.sendSocketNotification("GetStationStatus", station_status);
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney
             call = train.MonitoredCall
@@ -98,7 +111,7 @@ module.exports = NodeHelper.create({
     },
 
     buildCheckForDelays: function(parameters) {
-        return options = {
+        return {
             url: BASE_URL + 'StopMonitoring',
             method: 'GET',
             encoding: null,
@@ -116,7 +129,7 @@ module.exports = NodeHelper.create({
         // This can be inaccurate if the train is not set to arrive soon. It may be
         // good to threshold this somewhere. Perhaps list the upcomming trains but
         // don't display the status until it's close to the station
-        return options = {
+        return {
             url: BASE_URL + 'StopMonitoring',
             method: 'GET',
             encoding: null,
@@ -124,6 +137,23 @@ module.exports = NodeHelper.create({
                 'agency': 'CT',
                 'stopCode': '70112',
                 'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d', // TODO: abstract this in parameters
+            },
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }
+    },
+
+    buildGetDaySchedule: function(parameters) {
+        // This should only be run once per day, preferably in the morning
+        return {
+            url: BASE_URL + 'timetable',
+            method: 'GET',
+            encoding: null,
+            qs: {
+                'Operator_id': 'CT',
+                'Line_id': line_type,
+                'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d',
             },
             headers: {
                 'Content-Type': 'application/json',
