@@ -81,7 +81,7 @@ function CheckForDelaysCallback(raw_json) {
 				train: train.VehicleRef,
 				stop: call.StopPointName,
 				dir: train.DirectionRef,
-				delay: (exp - arrive) / 1000 / 60,
+				delay: Math.round((exp - arrive) / 1000 / 60),
 			})
 		}
 	}
@@ -99,7 +99,7 @@ function GetStationStatusCallback(raw_json) {
 		call = train.MonitoredCall
 		arrive = Date.parse(call.AimedArrivalTime)
 		exp = Date.parse(call.ExpectedArrivalTime)
-		status = (exp - arrive) / 1000 / 60
+		status = Math.round((exp - arrive) / 1000 / 60)
 
 		station_status.push({
 			train: train.VehicleRef,
