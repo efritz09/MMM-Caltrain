@@ -35,12 +35,7 @@ module.exports = NodeHelper.create({
                     })
                 }
             } else {
-                var message = {
-                    error: err,
-                    resp: resp,
-                    body: body,
-                }
-                self.sendSocketNotification("request error", message);
+                self.sendSocketNotification("request error", resp);
             }
         })
     },
@@ -101,7 +96,7 @@ module.exports = NodeHelper.create({
                 delay: status,
                 dir: train.DirectionRef,
                 line: train.LineRef,
-                arrive: arrive.toLocaleTimeString(),
+                arrive: call.AimedArrivalTime,
             })
         }
 
@@ -116,7 +111,7 @@ module.exports = NodeHelper.create({
             encoding: null,
             qs: {
                 "agency": "CT",
-                "api_key": parameters.key,
+                "api_key": parameters.config.key,
             },
             headers: {
                 "Content-Type": "application/json",
@@ -134,8 +129,8 @@ module.exports = NodeHelper.create({
             encoding: null,
             qs: {
                 "agency": "CT",
-                "stopCode": parameters.station_code,
-                "api_key": parameters.key,
+                "stopCode": parameters.config.station_code,
+                "api_key": parameters.config.key,
             },
             headers: {
                 "Content-Type": "application/json",
