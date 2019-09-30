@@ -35,11 +35,12 @@ module.exports = NodeHelper.create({
                     })
                 }
             } else {
-                self.sendSocketNotification("request error", {
+                var message = {
                     error: err,
                     resp: resp,
                     body: body,
-                });
+                }
+                self.sendSocketNotification("request error", message);
             }
         })
     },
