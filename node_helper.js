@@ -60,11 +60,16 @@ module.exports = NodeHelper.create({
             call = train.MonitoredCall
             arrive = Date.parse(call.AimedArrivalTime)
             exp = Date.parse(call.ExpectedArrivalTime)
+            train_ref = train.VehicleRef
             self.sendSocketNotification("delay call", call);
+            // Sometimes the api doesn't populate train.VehicleRef
+            if train_ref == null {
+                train_ref = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef
+            }
 
             if ((exp - arrive) > delay_time) {
                 delayed_trains.push({
-                    train: train.VehicleRef,
+                    train: train_ref,
                     stop: call.StopPointName,
                     dir: train.DirectionRef,
                     delay: Math.round((exp - arrive) / 1000 / 60),
