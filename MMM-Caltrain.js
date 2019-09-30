@@ -55,6 +55,10 @@ Module.register("MMM-Caltrain", {
             wrapper.className = "dimmed light small";
             return wrapper;
         }
+        
+        var compliment = document.createTextNode("test");
+        wrapper.className = this.config.classes ? this.config.classes : "thin xlarge bright pre-line";
+        wrapper.appendChild(compliment);
 
         if (this.delays) {
             var table = document.createElement("table");
@@ -85,18 +89,13 @@ Module.register("MMM-Caltrain", {
                 train_delay.innerHTML = t.delay;
                 row.appendChild(train_delay);
             }
+            wrapper.appendChild(table);
         }
+        return wrapper;
 
         // var table = document.createElement("table");
         // table.className = "small";
 		// var complimentText = this.randomCompliment();
-
-		var compliment = document.createTextNode("test");
-		var wrapper = document.createElement("div");
-		wrapper.className = this.config.classes ? this.config.classes : "thin xlarge bright pre-line";
-		wrapper.appendChild(compliment);
-
-		return wrapper;
         // this.info.trains.forEach(train_name => {
 
         //     if (this.config.train_blacklist.includes(train_name)) {
