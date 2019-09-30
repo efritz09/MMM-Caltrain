@@ -5,10 +5,8 @@ Module.register("MMM-Caltrain", {
 		key: "fa666f48-2174-4618-a349-97390b7e3e4d",
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
-        station_name: "Hillsdale"
+        station_name: "Hillsdale" // should abstract this to a code?
 	},
-
-	// All of this is based on the BART one
 
 	start: function() {
 		Log.info("starting module: " + this.name);
@@ -97,10 +95,6 @@ Module.register("MMM-Caltrain", {
         }
 
         if (this.station.length > 0) {
-            // var head = document.createTextNode(this.config.station_name);
-            // head.className = "small";
-            // wrapper.appendChild(head);
-
             var south_table = document.createElement("table");
             var north_table = document.createElement("table");
             south_table.className = "small";
@@ -148,37 +142,6 @@ Module.register("MMM-Caltrain", {
         }
 
         return wrapper;
-
-        // var table = document.createElement("table");
-        // table.className = "small";
-		// var complimentText = this.randomCompliment();
-        // this.info.trains.forEach(train_name => {
-
-        //     if (this.config.train_blacklist.includes(train_name)) {
-        //         console.log("gottem")
-        //         return;
-        //     }
-
-        //     var row = document.createElement("tr");
-        //     table.appendChild(row);
-
-        //     var trainCell = document.createElement("td");
-        //     trainCell.className = "train";
-        //     trainCell.innerHTML = train_name;
-        //     row.appendChild(trainCell);
-
-        //     this.info[train_name].forEach( time_to_departure => {
-        //         var timeCell = document.createElement("td");
-        //         timeCell.className = "time";
-        //         if (!isNaN(time_to_departure)) {
-        //             time_to_departure += " min";
-        //         }
-        //         timeCell.innerHTML = time_to_departure;
-        //         row.appendChild(timeCell);
-        //     });
-        // });
-
-        // return table;
     },
 
     // Override get header function
@@ -187,7 +150,7 @@ Module.register("MMM-Caltrain", {
         //     console.log(this.info.station_name);
         //     return this.info.station_name + " Caltrain Departure Times";
         // }
-        return "Caltrain Departure Times";
+        return "Caltrain Departure Time:" + this.config.station_name;
     },
 
     // Override notification handler.
@@ -206,6 +169,7 @@ Module.register("MMM-Caltrain", {
             this.loaded = true;
             this.updateDom();
         } else {
+            // Everything else is a debug message
             Log.info(query);
             Log.info(value);
         }

@@ -105,6 +105,7 @@ module.exports = NodeHelper.create({
     },
 
     buildCheckForDelays: function(parameters) {
+        this.sendSocketNotification("parameters", parameters);
         return options = {
             url: BASE_URL + "StopMonitoring",
             method: "GET",
@@ -123,6 +124,7 @@ module.exports = NodeHelper.create({
         // This can be inaccurate if the train is not set to arrive soon. It may be
         // good to threshold this somewhere. Perhaps list the upcomming trains but
         // don't display the status until it"s close to the station
+        this.sendSocketNotification("parameters", parameters);
         return options = {
             url: BASE_URL + "StopMonitoring",
             method: "GET",
