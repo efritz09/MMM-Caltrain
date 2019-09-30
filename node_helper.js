@@ -1,8 +1,8 @@
-var request = require('request')
+var request = require("request")
 var NodeHelper = require("node_helper")
-var zlib = require('zlib')
+var zlib = require("zlib")
 
-const BASE_URL = 'http://api.511.org/transit/'
+const BASE_URL = "http://api.511.org/transit/"
 
 // TODO: abstract this
 const delay_time = 5000 // milliseconds
@@ -10,6 +10,7 @@ const delay_time = 5000 // milliseconds
 module.exports = NodeHelper.create({
     start: function() {
         console.log("Starting node helper: " + this.name);
+        this.sendSocketNotification("starting node helper", "");
     },
 
     socketNotificationReceived: function(query, parameters) {
@@ -24,7 +25,7 @@ module.exports = NodeHelper.create({
 
         request(options, function(err, resp, body) {
             if(!err && resp.statusCode == 200) {
-                if(resp.headers['content-encoding'] == 'gzip') {
+                if(resp.headers["content-encoding"] == "gzip") {
                     zlib.gunzip(body, function(err, result) {
                         if (err) {
                             console.log("Error gunzipping: ", err)
@@ -34,7 +35,7 @@ module.exports = NodeHelper.create({
                     })
                 }
             } else {
-                console.log("request error: ", err, resp.statusCode)
+                self.sendSocketNotification("request error", err);
             }
         })
     },
@@ -45,7 +46,6 @@ module.exports = NodeHelper.create({
         } else if(query === "GetStationStatus") {
             options = self.getStationStatusCallback(data)
         }
-
     }
 
     // compare the aimed arrival and expected arrival times to find delays
@@ -54,6 +54,7 @@ module.exports = NodeHelper.create({
         var delayed_trains = []
         json = JSON.parse(data)
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
+        self.sendSocketNotification("CheckForDelays", delayed_trains);
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney
             call = train.MonitoredCall
@@ -79,6 +80,7 @@ module.exports = NodeHelper.create({
         station_status = []
         json = JSON.parse(data)
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
+        self.sendSocketNotification("GetStationStatus", station_status);
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney
             call = train.MonitoredCall
@@ -99,15 +101,15 @@ module.exports = NodeHelper.create({
 
     buildCheckForDelays: function(parameters) {
         return options = {
-            url: BASE_URL + 'StopMonitoring',
-            method: 'GET',
+            url: BASE_URL + "StopMonitoring",
+            method: "GET",
             encoding: null,
             qs: {
-                'agency': 'CT',
-                'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d', // TODO: abstract this in parameters
+                "agency": "CT",
+                "api_key": "fa666f48-2174-4618-a349-97390b7e3e4d", // TODO: abstract this in parameters
             },
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             }
         }
     },
@@ -115,18 +117,18 @@ module.exports = NodeHelper.create({
     buildGetStationStatus: function(parameters) {
         // This can be inaccurate if the train is not set to arrive soon. It may be
         // good to threshold this somewhere. Perhaps list the upcomming trains but
-        // don't display the status until it's close to the station
+        // don't display the status until it"s close to the station
         return options = {
-            url: BASE_URL + 'StopMonitoring',
-            method: 'GET',
+            url: BASE_URL + "StopMonitoring",
+            method: "GET",
             encoding: null,
             qs: {
-                'agency': 'CT',
-                'stopCode': '70112',
-                'api_key': 'fa666f48-2174-4618-a349-97390b7e3e4d', // TODO: abstract this in parameters
+                "agency": "CT",
+                "stopCode": "70112",
+                "api_key": "fa666f48-2174-4618-a349-97390b7e3e4d", // TODO: abstract this in parameters
             },
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             }
         }
     },

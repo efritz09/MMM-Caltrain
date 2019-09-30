@@ -68,7 +68,7 @@ Module.register("MMM-Caltrain", {
         // this.info.trains.forEach(train_name => {
 
         //     if (this.config.train_blacklist.includes(train_name)) {
-        //         console.log('gottem')
+        //         console.log("gottem")
         //         return;
         //     }
 
@@ -84,7 +84,7 @@ Module.register("MMM-Caltrain", {
         //         var timeCell = document.createElement("td");
         //         timeCell.className = "time";
         //         if (!isNaN(time_to_departure)) {
-        //             time_to_departure += ' min';
+        //             time_to_departure += " min";
         //         }
         //         timeCell.innerHTML = time_to_departure;
         //         row.appendChild(timeCell);
@@ -98,9 +98,9 @@ Module.register("MMM-Caltrain", {
     getHeader: function() {
         // if (this.info) {
         //     console.log(this.info.station_name);
-        //     return this.info.station_name + ' Caltrain Departure Times';
+        //     return this.info.station_name + " Caltrain Departure Times";
         // }
-        return 'Caltrain Departure Times'
+        return "Caltrain Departure Times"
     },
 
     // Override notification handler.
@@ -116,6 +116,9 @@ Module.register("MMM-Caltrain", {
             this.info = "GetStationStatus"
             Log.info(parameters)
             this.updateDom()
+        } else {
+            Log.info(query)
+            Log.info(parameters)
         }
     },
 
