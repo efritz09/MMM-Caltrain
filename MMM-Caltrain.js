@@ -2,11 +2,11 @@ Module.register("MMM-Caltrain", {
 
 	// Default config
 	defaults: {
-		key: "fa666f48-2174-4618-a349-97390b7e3e4d",
+		// key: "fa666f48-2174-4618-a349-97390b7e3e4d",
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
-        stationName: "Hillsdale", // should abstract this to a code?
-        stationCode: "70112",
+        stationName: "", // should abstract this to a code?
+        // stationCode: "70112",
         timeFormat: 12,
         delayThreshold: 600000, // 10 minutes
 	},
