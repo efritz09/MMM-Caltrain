@@ -11,13 +11,13 @@ module.exports = NodeHelper.create({
     },
 
     socketNotificationReceived: function(query, parameters) {
-        var self = this
-        console.log("Query: " + query + " Parameters: " + parameters)
-        var options
+        var self = this;
+        console.log("Query: " + query + " Parameters: " + parameters);
+        var options;
         if(query === "CheckForDelays") {
-            options = self.buildCheckForDelays(parameters)
+            options = self.buildCheckForDelays(parameters);
         } else if(query === "GetStationStatus") {
-            options = self.buildGetStationStatus(parameters)
+            options = self.buildGetStationStatus(parameters);
         }
 
         request(options, function(err, resp, body) {
@@ -25,9 +25,9 @@ module.exports = NodeHelper.create({
                 if(resp.headers["content-encoding"] == "gzip") {
                     zlib.gunzip(body, function(err, result) {
                         if (err) {
-                            console.log("Error gunzipping: ", err)
+                            console.log("Error gunzipping: ", err);
                         } else {
-                            self.requestHandler(query, parameters, result.toString("utf-8").trim())
+                            self.requestHandler(query, parameters, result.toString("utf-8").trim());
                         }
                     })
                 }
@@ -39,30 +39,27 @@ module.exports = NodeHelper.create({
 
     requestHandler: function(query, parameters, data) {
         if(query === "CheckForDelays") {
-            options = this.checkForDelaysCallback(data, parameters.config.delayThreshold)
+            options = this.checkForDelaysCallback(data, parameters.config.delayThreshold);
         } else if(query === "GetStationStatus") {
-            options = this.getStationStatusCallback(data)
+            options = this.getStationStatusCallback(data);
         }
     },
 
     // compare the aimed arrival and expected arrival times to find delays
     checkForDelaysCallback: function(data, delayThreshold) {
-        var self = this
-        var delayedTrains = []
-        json = JSON.parse(data)
+        var self = this;
+        var delayedTrains = [];
+        json = JSON.parse(data);
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
-        self.sendSocketNotification("CheckForDelays", delayedTrains);
-        self.sendSocketNotification("delayThreshold", delayThreshold);
         for (var i = 0, len = data.length; i < len; i++) {
-            train = data[i].MonitoredVehicleJourney
-            call = train.MonitoredCall
-            arrive = Date.parse(call.AimedArrivalTime)
-            exp = Date.parse(call.ExpectedArrivalTime)
-            trainRef = train.VehicleRef
-            self.sendSocketNotification("delay call", call);
+            train = data[i].MonitoredVehicleJourney;
+            call = train.MonitoredCall;
+            arrive = Date.parse(call.AimedArrivalTime);
+            exp = Date.parse(call.ExpectedArrivalTime);
+            trainRef = train.VehicleRef;
             // Sometimes the api doesn't populate train.VehicleRef
             if (trainRef == null) {
-                trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef
+                trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
             }
             if ((exp - arrive) > delayThreshold) {
                 delayedTrains.push({
@@ -70,28 +67,26 @@ module.exports = NodeHelper.create({
                     stop: call.StopPointName.split(" Caltrain")[0],
                     dir: train.DirectionRef,
                     delay: Math.round((exp - arrive) / 1000 / 60),
-                })
+                });
             }
         }
-        console.log("CheckForDelaysCallback")
+        console.log("CheckForDelaysCallback");
         self.sendSocketNotification("CheckForDelays", delayedTrains);
     },
 
     // returns all reported train statuses for a given station
     getStationStatusCallback: function(data) {
-        var self = this
-        stationStatus = []
-        json = JSON.parse(data)
-        data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
-        self.sendSocketNotification("GetStationStatus", stationStatus);
+        var self = this;
+        stationStatus = [];
+        json = JSON.parse(data);
+        data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit;
         for (var i = 0, len = data.length; i < len; i++) {
-            train = data[i].MonitoredVehicleJourney
-            call = train.MonitoredCall
+            train = data[i].MonitoredVehicleJourney;
+            call = train.MonitoredCall;
             // check these?
-            arrive = Date.parse(call.AimedArrivalTime)
-            exp = Date.parse(call.ExpectedArrivalTime)
-            status = Math.round((exp - arrive) / 1000 / 60)
-            self.sendSocketNotification("station call", call);
+            arrive = Date.parse(call.AimedArrivalTime);
+            exp = Date.parse(call.ExpectedArrivalTime);
+            status = Math.round((exp - arrive) / 1000 / 60);
 
             stationStatus.push({
                 train: train.VehicleRef,
@@ -99,15 +94,15 @@ module.exports = NodeHelper.create({
                 dir: train.DirectionRef,
                 line: train.LineRef,
                 arrive: call.AimedArrivalTime,
-            })
+            });
         }
 
-        console.log("GetStationStatusCallback")
+        console.log("GetStationStatusCallback");
         self.sendSocketNotification("GetStationStatus", stationStatus);
     },
 
     buildCheckForDelays: function(parameters) {
-        return options = {
+        return {
             url: BASE_URL + "StopMonitoring",
             method: "GET",
             encoding: null,
@@ -124,8 +119,8 @@ module.exports = NodeHelper.create({
     buildGetStationStatus: function(parameters) {
         // This can be inaccurate if the train is not set to arrive soon. It may be
         // good to threshold this somewhere. Perhaps list the upcomming trains but
-        // don't display the status until it"s close to the station
-        return options = {
+        // don't display the status until it's close to the station
+        return {
             url: BASE_URL + "StopMonitoring",
             method: "GET",
             encoding: null,
