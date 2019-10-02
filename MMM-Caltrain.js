@@ -11,19 +11,20 @@ Module.register("MMM-Caltrain", {
 
 	start: function() {
 		Log.info("starting module: " + this.name);
+        var self = this;
 
         this.loaded = false;
         this.delays = [];
         this.station = [];
 
-		this.getDelayInfo();
-		this.getStationInfo();
+		self.getDelayInfo();
+		self.getStationInfo();
 
 		// Schedule update timer.
 		setInterval(function() {
-			this.getDelayInfo();
-			this.getStationInfo();
-		}, this.config.updateInterval);
+			self.getDelayInfo();
+			self.getStationInfo();
+		}, self.config.updateInterval);
 	},
 
 	getStyles: function() {
