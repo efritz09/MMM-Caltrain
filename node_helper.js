@@ -4,9 +4,6 @@ var zlib = require("zlib")
 
 const BASE_URL = "http://api.511.org/transit/"
 
-// TODO: abstract this
-const delay_time = 5000 // milliseconds
-
 module.exports = NodeHelper.create({
     start: function() {
         console.log("Starting node helper: " + this.name);
@@ -30,7 +27,7 @@ module.exports = NodeHelper.create({
                         if (err) {
                             console.log("Error gunzipping: ", err)
                         } else {
-                            self.requestHandler(query, result.toString("utf-8").trim())
+                            self.requestHandler(query, parameters, result.toString("utf-8").trim())
                         }
                     })
                 }
@@ -40,36 +37,36 @@ module.exports = NodeHelper.create({
         })
     },
 
-    requestHandler: function(query, data) {
+    requestHandler: function(query, parameters, data) {
         if(query === "CheckForDelays") {
-            options = this.checkForDelaysCallback(data)
+            options = this.checkForDelaysCallback(data, parameters.config.delayThreshold)
         } else if(query === "GetStationStatus") {
             options = this.getStationStatusCallback(data)
         }
     },
 
     // compare the aimed arrival and expected arrival times to find delays
-    checkForDelaysCallback: function(data) {
+    checkForDelaysCallback: function(data, delayThreshold) {
         var self = this
-        var delayed_trains = []
+        var delayedTrains = []
         json = JSON.parse(data)
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
-        self.sendSocketNotification("CheckForDelays", delayed_trains);
+        self.sendSocketNotification("CheckForDelays", delayedTrains);
+        self.sendSocketNotification("delayThreshold", delayThreshold);
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney
             call = train.MonitoredCall
             arrive = Date.parse(call.AimedArrivalTime)
             exp = Date.parse(call.ExpectedArrivalTime)
-            train_ref = train.VehicleRef
+            trainRef = train.VehicleRef
             self.sendSocketNotification("delay call", call);
             // Sometimes the api doesn't populate train.VehicleRef
-            if (train_ref == null) {
-                train_ref = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef
+            if (trainRef == null) {
+                trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef
             }
-
-            if ((exp - arrive) > delay_time) {
-                delayed_trains.push({
-                    train: train_ref,
+            if ((exp - arrive) > delayThreshold) {
+                delayedTrains.push({
+                    train: trainRef,
                     stop: call.StopPointName.split(" Caltrain")[0],
                     dir: train.DirectionRef,
                     delay: Math.round((exp - arrive) / 1000 / 60),
@@ -77,16 +74,16 @@ module.exports = NodeHelper.create({
             }
         }
         console.log("CheckForDelaysCallback")
-        self.sendSocketNotification("CheckForDelays", delayed_trains);
+        self.sendSocketNotification("CheckForDelays", delayedTrains);
     },
 
     // returns all reported train statuses for a given station
     getStationStatusCallback: function(data) {
         var self = this
-        station_status = []
+        stationStatus = []
         json = JSON.parse(data)
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
-        self.sendSocketNotification("GetStationStatus", station_status);
+        self.sendSocketNotification("GetStationStatus", stationStatus);
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney
             call = train.MonitoredCall
@@ -96,7 +93,7 @@ module.exports = NodeHelper.create({
             status = Math.round((exp - arrive) / 1000 / 60)
             self.sendSocketNotification("station call", call);
 
-            station_status.push({
+            stationStatus.push({
                 train: train.VehicleRef,
                 delay: status,
                 dir: train.DirectionRef,
@@ -106,7 +103,7 @@ module.exports = NodeHelper.create({
         }
 
         console.log("GetStationStatusCallback")
-        self.sendSocketNotification("GetStationStatus", station_status);
+        self.sendSocketNotification("GetStationStatus", stationStatus);
     },
 
     buildCheckForDelays: function(parameters) {
@@ -134,7 +131,7 @@ module.exports = NodeHelper.create({
             encoding: null,
             qs: {
                 "agency": "CT",
-                "stopCode": parameters.config.station_code,
+                "stopCode": parameters.config.stationCode,
                 "api_key": parameters.config.key,
             },
             headers: {

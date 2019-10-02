@@ -5,8 +5,10 @@ Module.register("MMM-Caltrain", {
 		key: "fa666f48-2174-4618-a349-97390b7e3e4d",
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
-        station_name: "Hillsdale", // should abstract this to a code?
-        station_code: "70112",
+        stationName: "Hillsdale", // should abstract this to a code?
+        stationCode: "70112",
+        timeFormat: 12,
+        delayThreshold: 600000, // 10 minutes
 	},
 
 	start: function() {
@@ -55,13 +57,11 @@ Module.register("MMM-Caltrain", {
             wrapper.className = "dimmed light small";
             return wrapper;
         }
-        
-        // var compliment = document.createTextNode("test");
-        // wrapper.className = this.config.classes ? this.config.classes : "thin xlarge bright pre-line";
-        // wrapper.appendChild(compliment);
 
+        // Generate the delays report
         if (this.delays.length > 0) {
-            var head = document.createTextNode("WARNING: Delays Reported");
+            var head = document.createElement("legend")
+            head.innerHTML = "WARNING: Delays Reported";
             head.className = "warning";
             wrapper.appendChild(head);
 
@@ -73,81 +73,82 @@ Module.register("MMM-Caltrain", {
                 var row = document.createElement("tr");
                 table.appendChild(row);
 
-                var train_name = document.createElement("td");
-                train_name.className = "train";
-                train_name.innerHTML = t.train;
-                row.appendChild(train_name);
+                var trainName = document.createElement("td");
+                trainName.className = "train";
+                trainName.innerHTML = t.train;
+                row.appendChild(trainName);
 
-                var train_dir = document.createElement("td");
-                train_dir.className = "train_dir";
-                train_dir.innerHTML = t.dir;
-                row.appendChild(train_dir);
+                var trainDir = document.createElement("td");
+                trainDir.className = "trainDir";
+                trainDir.innerHTML = t.dir;
+                row.appendChild(trainDir);
 
-                var train_stop = document.createElement("td");
-                train_stop.className = "train_stop";
-                train_stop.innerHTML = t.stop;
-                row.appendChild(train_stop);
+                var trainStop = document.createElement("td");
+                trainStop.className = "trainStop";
+                trainStop.innerHTML = t.stop;
+                row.appendChild(trainStop);
 
-                var train_delay = document.createElement("td");
-                train_delay.className = "train_delay";
-                train_delay.innerHTML = t.delay + " min late";
-                row.appendChild(train_delay);
+                var trainDelay = document.createElement("td");
+                trainDelay.className = "trainDelay";
+                trainDelay.innerHTML = t.delay + " min late";
+                row.appendChild(trainDelay);
             }
             wrapper.appendChild(table);
         }
 
+        // Generate the station's North/Southbound trains
         if (this.station.length > 0) {
-            var south_table = document.createElement("table");
-            var north_table = document.createElement("table");
-            south_table.className = "small";
-            north_table.className = "small";
+            var southTable = document.createElement("table");
+            var northTable = document.createElement("table");
+            southTable.className = "small";
+            northTable.className = "small";
             for (var i = 0, len = this.station.length; i < len; i++) {
                 var t = this.station[i];
                 console.log("appending: ", t);
                 var row = document.createElement("tr");
                 if (t.dir === "South") {
-                    south_table.appendChild(row);
+                    southTable.appendChild(row);
                 } else if (t.dir === "North") {
-                    north_table.appendChild(row);
+                    northTable.appendChild(row);
                 }
 
-                var train_name = document.createElement("td");
-                train_name.className = "train";
-                train_name.innerHTML = t.train;
-                row.appendChild(train_name);
+                var trainName = document.createElement("td");
+                trainName.className = "train";
+                trainName.innerHTML = t.train;
+                row.appendChild(trainName);
 
-                var train_line = document.createElement("td");
-                train_line.className = "line";
-                train_line.innerHTML = t.line;
-                row.appendChild(train_line);
+                var trainLine = document.createElement("td");
+                trainLine.className = "line";
+                trainLine.innerHTML = t.line;
+                row.appendChild(trainLine);
 
-                var train_arrive = document.createElement("td");
-                train_arrive.className = "arrive";
+                var trainArrival = document.createElement("td");
+                trainArrival.className = "arrive";
                 var d = new Date(t.arrive);
-                var hours = d.getHours() % 12
-                var minutes = d.getMinutes()
-                train_arrive.innerHTML = hours + ":" + minutes;
-                row.appendChild(train_arrive);
+                var hours = d.getHours() % this.config.timeFormat;
+                var minutes = d.getMinutes();
+                trainArrival.innerHTML = hours + ":" + minutes;
+                row.appendChild(trainArrival);
 
-                var train_delay = document.createElement("td");
-                train_delay.className = "train_delay";
+                var trainDelay = document.createElement("td");
+                trainDelay.className = "trainDelay";
                 if (t.delay <= 0) {
-                    train_delay.innerHTML = "On Time"
+                    trainDelay.innerHTML = "On Time";
                 } else {
-                    train_delay.innerHTML = t.delay + " min";
+                    trainDelay.innerHTML = t.delay + " min";
                 }
-                row.appendChild(train_delay);
+                row.appendChild(trainDelay);
             }
 
-            var north_head = document.createTextNode("Northbound");
-            north_head.className = "small";
-            wrapper.appendChild(north_head)
-            wrapper.appendChild(north_table);
+            var northHead = document.createTextNode("Northbound");
+            northHead.className = "small";
+            wrapper.appendChild(northHead);
+            wrapper.appendChild(northTable);
 
-            var south_head = document.createTextNode("Southbound");
-            south_head.className = "small";
-            wrapper.appendChild(south_head)
-            wrapper.appendChild(south_table);
+            var southHead = document.createTextNode("Southbound");
+            southHead.className = "small";
+            wrapper.appendChild(southHead);
+            wrapper.appendChild(southTable);
         }
 
         return wrapper;
@@ -155,7 +156,7 @@ Module.register("MMM-Caltrain", {
 
     // Override get header function
     getHeader: function() {
-        return "Caltrain Departure Time: " + this.config.station_name;
+        return "Caltrain Departure Time: " + this.config.stationName;
     },
 
     // Override notification handler.
@@ -179,5 +180,4 @@ Module.register("MMM-Caltrain", {
             Log.info(value);
         }
     },
-
 });
