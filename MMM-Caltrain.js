@@ -62,7 +62,7 @@ Module.register("MMM-Caltrain", {
 
         if (this.delays.length > 0) {
             var head = document.createTextNode("WARNING: Delays Reported");
-            head.className = "small";
+            head.className = "warning";
             wrapper.appendChild(head);
 
             var table = document.createElement("table");
@@ -90,7 +90,7 @@ Module.register("MMM-Caltrain", {
 
                 var train_delay = document.createElement("td");
                 train_delay.className = "train_delay";
-                train_delay.innerHTML = t.delay + " min";
+                train_delay.innerHTML = t.delay + " min late";
                 row.appendChild(train_delay);
             }
             wrapper.appendChild(table);
@@ -155,11 +155,7 @@ Module.register("MMM-Caltrain", {
 
     // Override get header function
     getHeader: function() {
-        // if (this.info) {
-        //     console.log(this.info.station_name);
-        //     return this.info.station_name + " Caltrain Departure Times";
-        // }
-        return "Caltrain Departure Time:" + this.config.station_name;
+        return "Caltrain Departure Time: " + this.config.station_name;
     },
 
     // Override notification handler.
