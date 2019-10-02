@@ -7,6 +7,7 @@ Module.register("MMM-Caltrain", {
 		updateInterval: 600000, // 10 minutes
         stationName: "", // should abstract this to a code?
         // stationCode: "70112",
+        direction: "", // if unset, both directions - TODO: implement
         timeFormat: 12,
         delayThreshold: 600000, // 10 minutes
 	},
@@ -98,6 +99,8 @@ Module.register("MMM-Caltrain", {
 
         // Generate the station's North/Southbound trains
         if (this.station.length > 0) {
+            // might be best to split this up into two sections instead
+            // then we can filter based on the config.direction
             var southTable = document.createElement("table");
             var northTable = document.createElement("table");
             southTable.className = "small";
