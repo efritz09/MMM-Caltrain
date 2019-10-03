@@ -77,9 +77,9 @@ module.exports = NodeHelper.create({
 
     requestHandler: function(query, parameters, data) {
         if(query === "CheckForDelays") {
-            options = this.checkForDelaysCallback(data, parameters.config.delayThreshold);
+            options = this.checkForDelaysCallback(data, parameters.delayThreshold);
         } else if(query === "GetStationStatus") {
-            options = this.getStationStatusCallback(data);
+            options = this.getStationStatusCallback(data, parameters.);
         }
     },
 
@@ -113,7 +113,7 @@ module.exports = NodeHelper.create({
     },
 
     // returns all reported train statuses for a given station
-    getStationStatusCallback: function(data) {
+    getStationStatusCallback: function(data, direction) {
         var self = this;
         stationStatus = [];
         json = JSON.parse(data);
@@ -136,7 +136,11 @@ module.exports = NodeHelper.create({
         }
 
         console.log("GetStationStatusCallback");
-        self.sendSocketNotification("GetStationStatus", stationStatus);
+        if (direction === "south") {
+            self.sendSocketNotification("GetSouthboundTrains", stationStatus);
+        } else if (direction === "north") {
+            self.sendSocketNotification("GetNorthboundTrains", stationStatus);
+        }
     },
 
     buildCheckForDelays: function(parameters) {
@@ -158,13 +162,15 @@ module.exports = NodeHelper.create({
         // This can be inaccurate if the train is not set to arrive soon. It may be
         // good to threshold this somewhere. Perhaps list the upcomming trains but
         // don't display the status until it's close to the station
+        var stopCode = STATIONS[parameters.stationName][parameters.trainDirection];
+        self.sendSocketNotification("stopcode", stopCode)
         return {
             url: BASE_URL + "StopMonitoring",
             method: "GET",
             encoding: null,
             qs: {
                 "agency": "CT",
-                "stopCode": STATIONS[parameters.stationName][parameters.trainDirection],
+                "stopCode": stopCode,
                 "api_key": parameters.key,
             },
             headers: {

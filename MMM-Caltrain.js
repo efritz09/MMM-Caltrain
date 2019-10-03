@@ -43,9 +43,9 @@ Module.register("MMM-Caltrain", {
 
     getStationInfo: function() {
     	Log.info("Requesting station info");
-        if (this.config.direction.toLowerCase() == "south") {
+        if (this.config.direction.toLowerCase() === "south") {
             this.getSouthboundTrains();
-        } else if (this.config.direction.toLowerCase() == "north") {
+        } else if (this.config.direction.toLowerCase() === "north") {
             this.getNorthboundTrains();
         } else {
             // request both north and south
