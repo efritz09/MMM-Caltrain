@@ -77,15 +77,19 @@ Module.register("MMM-Caltrain", {
 	},
 
     getDelayInfo: function() {
+        var params = {
+            key: this.config.key,
+            delayThreshold: this.config.delayThreshold,
+        }
         Log.info("Requesting delay info");
-        this.sendSocketNotification("CheckForDelays", this.requestParams);
+        this.sendSocketNotification("CheckForDelays", params);
     },
 
     getStationInfo: function() {
     	Log.info("Requesting station info");
-        if this.direction.toLowerCase() == "south" {
+        if (this.direction.toLowerCase() == "south") {
             this.getSouthboundTrains();
-        } else if this.direction.toLowerCase() == "north" {
+        } else if (this.direction.toLowerCase() == "north") {
             this.getNorthboundTrains();
         } else {
             // request both north and south
@@ -96,8 +100,11 @@ Module.register("MMM-Caltrain", {
 
     getSouthboundTrains: function() {
         Log.info("Requesting southbound info");
-        var params = this.requestParams;
-        params["stationCode"] = STATIONS[this.config.stationName]["South"]
+        var params = {
+            key: this.config.key,
+            delayThreshold: this.config.delayThreshold,
+            stationCode: STATIONS[this.config.stationName]["South"],
+        }
         Log.info(params)
         this.sendSocketNotification("GetStationStatus", params)
     },
@@ -105,8 +112,11 @@ Module.register("MMM-Caltrain", {
 
     getNorthboundTrains: function() {
         Log.info("Requesting northbound info");
-        var params = this.requestParams;
-        params["stationCode"] = STATIONS[this.config.stationName]["North"]
+        var params = {
+            key: this.config.key,
+            delayThreshold: this.config.delayThreshold,
+            stationCode: STATIONS[this.config.stationName]["North"],
+        }
         Log.info(params)
         this.sendSocketNotification("GetStationStatus", params)
     },
