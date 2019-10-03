@@ -7,7 +7,6 @@ Module.register("MMM-Caltrain", {
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
         stationName: "", // should abstract this to a code?
-        // stationCode: "70112",
         direction: "", // if unset, both directions - TODO: implement
         timeFormat: 12,
         delayThreshold: 600000, // 10 minutes
@@ -56,8 +55,10 @@ Module.register("MMM-Caltrain", {
 
     getSouthboundTrains: function() {
         Log.info("Requesting southbound info");
-        var params = this.config;
-        params.trainDirection = "south";
+        var params = {
+            key: this.config.key,
+            trainDirection: "south",
+        }
         Log.info(params);
         this.sendSocketNotification("GetStationStatus", params);
     },
@@ -65,8 +66,10 @@ Module.register("MMM-Caltrain", {
 
     getNorthboundTrains: function() {
         Log.info("Requesting northbound info");
-        var params = this.config;
-        params.trainDirection = "north";
+        var params = {
+            key: this.config.key,
+            trainDirection: "north",
+        }
         Log.info(params);
         this.sendSocketNotification("GetStationStatus", params);
     },
