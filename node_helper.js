@@ -4,44 +4,6 @@ var zlib = require("zlib")
 
 const BASE_URL = "http://api.511.org/transit/"
 
-// uncertain if it always holds true that 1 is north and 2 is south
-const STATIONS = {
-    "22nd Street": [70021, 70022],
-    "Atherton": [70152, 70151],
-    "Bayshore": [70032, 70031],
-    "Belmont": [70121, 70122],
-    "Blossom Hill": [70292, 70291],
-    "Broadway": [70072, 70071],
-    "Burlingame": [70081, 70082],
-    "California Ave": [70191, 70192],
-    "Capitol": [70282, 70281],
-    "College Park": [70251, 70252],
-    "Gilroy": [70321, 70322],
-    "Hayward Park": [70101, 70102],
-    "Hillsdale": [70112, 70111],
-    "Lawrence": [70232, 70231],
-    "Menlo Park": [70161, 70162],
-    "Millbrae": [70062, 70061],
-    "Morgan Hill": [70301, 70302],
-    "Mountain View": [70211, 70212],
-    "Palo Alto": [70172, 70171],
-    "Redwood City": [70142, 70141],
-    "San Antonio": [70202, 70201],
-    "San Bruno": [70052, 70051],
-    "San Carlos": [70132, 70131],
-    "San Francisco": [70012, 70011],
-    "San Jose": [777402],
-    "San Jose Diridon": [70262, 70261],
-    "San Martin": [70311, 70312],
-    "San Mateo": [70091, 70092],
-    "Santa Clara": [70242, 70241],
-    "South San Francisco": [70042, 70041],
-    "Sunnyvale": [70221, 70222],
-    "Tamien": [70271, 70272],
-    "Tamien-other": [777403], 
-}
-
-
 module.exports = NodeHelper.create({
     start: function() {
         console.log("Starting node helper: " + this.name);
@@ -146,7 +108,7 @@ module.exports = NodeHelper.create({
             encoding: null,
             qs: {
                 "agency": "CT",
-                "api_key": parameters.config.key,
+                "api_key": parameters.key,
             },
             headers: {
                 "Content-Type": "application/json",
@@ -164,8 +126,8 @@ module.exports = NodeHelper.create({
             encoding: null,
             qs: {
                 "agency": "CT",
-                "stopCode": parameters.config.stationCode,
-                "api_key": parameters.config.key,
+                "stopCode": parameters.stationCode,
+                "api_key": parameters.key,
             },
             headers: {
                 "Content-Type": "application/json",
