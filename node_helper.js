@@ -4,6 +4,43 @@ var zlib = require("zlib")
 
 const BASE_URL = "http://api.511.org/transit/"
 
+// uncertain if it always holds true that 1 is north and 2 is south
+const STATIONS = {
+    "22nd Street": {"North": 70021, "South": 70022},
+    "Atherton": {"North": 70151, "South": 70152},
+    "Bayshore": {"North": 70031, "South": 70032},
+    "Belmont": {"North": 70121, "South": 70122},
+    "Blossom Hill": {"North": 70291, "South": 70292},
+    "Broadway": {"North": 70071, "South": 70072},
+    "Burlingame": {"North": 70081, "South": 70082},
+    "California Ave": {"North": 70191, "South": 70192},
+    "Capitol": {"North": 70281, "South": 70282},
+    "College Park": {"North": 70251, "South": 70252},
+    "Gilroy": {"North": 70321, "South": 70322},
+    "Hayward Park": {"North": 70101, "South": 70102},
+    "Hillsdale": {"North": 70111, "South": 70112},
+    "Lawrence": {"North": 70231, "South": 70232},
+    "Menlo Park": {"North": 70161, "South": 70162},
+    "Millbrae": {"North": 70061, "South": 70062},
+    "Morgan Hill": {"North": 70301, "South": 70302},
+    "Mountain View": {"North": 70211, "South": 70212},
+    "Palo Alto": {"North": 70171, "South": 70172},
+    "Redwood City": {"North": 70141, "South": 70142},
+    "San Antonio": {"North": 70201, "South": 70202},
+    "San Bruno": {"North": 70051, "South": 70052},
+    "San Carlos": {"North": 70131, "South": 70132},
+    "San Francisco": {"North": 70011, "South": 70012},
+    "San Jose Diridon": {"North": 70261, "South": 70262},
+    "San Martin": {"North": 70311, "South": 70312},
+    "San Mateo": {"North": 70091, "South": 70092},
+    "Santa Clara": {"North": 70241, "South": 70242},
+    "South San Francisco": {"North": 70041, "South": 70042},
+    "Sunnyvale": {"North": 70221, "South": 70222},
+    "Tamien": {"North": 70271, "South": 70272},
+    // "Tamien-other": {"North": 777403},
+    // "San Jose": {"North": 777401},
+}
+
 module.exports = NodeHelper.create({
     start: function() {
         console.log("Starting node helper: " + this.name);
@@ -20,6 +57,7 @@ module.exports = NodeHelper.create({
             options = self.buildGetStationStatus(parameters);
         }
 
+        self.sendSocketNotification("request params", options);
         request(options, function(err, resp, body) {
             if(!err && resp.statusCode == 200) {
                 if(resp.headers["content-encoding"] == "gzip") {
@@ -126,7 +164,7 @@ module.exports = NodeHelper.create({
             encoding: null,
             qs: {
                 "agency": "CT",
-                "stopCode": parameters.stationCode,
+                "stopCode": STATIONS[parameters.stationName][parameters.trainDirection],
                 "api_key": parameters.key,
             },
             headers: {
