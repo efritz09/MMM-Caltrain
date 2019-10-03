@@ -58,6 +58,7 @@ Module.register("MMM-Caltrain", {
         var params = {
             key: this.config.key,
             trainDirection: "south",
+            stationName: this.config.stationName,
         }
         Log.info(params);
         this.sendSocketNotification("GetStationStatus", params);
@@ -69,6 +70,7 @@ Module.register("MMM-Caltrain", {
         var params = {
             key: this.config.key,
             trainDirection: "north",
+            stationName: this.config.stationName,
         }
         Log.info(params);
         this.sendSocketNotification("GetStationStatus", params);
@@ -146,9 +148,8 @@ Module.register("MMM-Caltrain", {
                 var trainArrival = document.createElement("td");
                 trainArrival.className = "arrive";
                 var d = new Date(t.arrive);
-                var hours = d.getHours() % this.config.timeFormat;
-                var minutes = d.getMinutes();
-                trainArrival.innerHTML = hours + ":" + minutes;
+                localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
+                trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
                 row.appendChild(trainArrival);
 
                 var trainDelay = document.createElement("td");
