@@ -124,8 +124,8 @@ Module.register("MMM-Caltrain", {
         if (this.stationNorth.length > 0) {
             var northTable = document.createElement("table");
             northTable.className = "small";
-            for (var i = 0, len = this.station.length; i < len; i++) {
-                var t = this.station[i];
+            for (var i = 0, len = this.stationNorth.length; i < len; i++) {
+                var t = this.stationNorth[i];
                 console.log("appending: ", t);
                 var row = document.createElement("tr");
                 northTable.appendChild(row);
@@ -170,8 +170,8 @@ Module.register("MMM-Caltrain", {
             // then we can filter based on the config.direction
             var southTable = document.createElement("table");
             southTable.className = "small";
-            for (var i = 0, len = this.station.length; i < len; i++) {
-                var t = this.station[i];
+            for (var i = 0, len = this.stationSouth.length; i < len; i++) {
+                var t = this.stationSouth[i];
                 console.log("appending: ", t);
                 var row = document.createElement("tr");
                 southTable.appendChild(row);

@@ -79,7 +79,7 @@ module.exports = NodeHelper.create({
         if(query === "CheckForDelays") {
             options = this.checkForDelaysCallback(data, parameters.delayThreshold);
         } else if(query === "GetStationStatus") {
-            options = this.getStationStatusCallback(data, parameters.);
+            options = this.getStationStatusCallback(data, parameters.trainDirection);
         }
     },
 
@@ -163,7 +163,7 @@ module.exports = NodeHelper.create({
         // good to threshold this somewhere. Perhaps list the upcomming trains but
         // don't display the status until it's close to the station
         var stopCode = STATIONS[parameters.stationName][parameters.trainDirection];
-        self.sendSocketNotification("stopcode", stopCode)
+        this.sendSocketNotification("stopcode", stopCode)
         return {
             url: BASE_URL + "StopMonitoring",
             method: "GET",
