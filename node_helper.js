@@ -94,12 +94,9 @@ module.exports = NodeHelper.create({
             call = train.MonitoredCall;
             arrive = Date.parse(call.AimedArrivalTime);
             exp = Date.parse(call.ExpectedArrivalTime);
-            trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
-            self.sendSocketNotification("train", train);
             // Sometimes the api doesn't populate train.VehicleRef
-            // if (trainRef == null) {
-                // trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
-            // }
+            trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
+
             if ((exp - arrive) > delayThreshold) {
                 delayedTrains.push({
                     train: trainRef,

@@ -3,11 +3,10 @@ Module.register("MMM-Caltrain", {
 
 	// Default config
 	defaults: {
-		// key: "fa666f48-2174-4618-a349-97390b7e3e4d",
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
         stationName: "", // should abstract this to a code?
-        direction: "", // if unset, both directions - TODO: implement
+        direction: "", // if unset, both directions
         timeFormat: 12,
         delayThreshold: 600000, // 10 minutes
 	},
@@ -193,9 +192,8 @@ Module.register("MMM-Caltrain", {
                 var trainArrival = document.createElement("td");
                 trainArrival.className = "arrive";
                 var d = new Date(t.arrive);
-                var hours = d.getHours() % this.config.timeFormat;
-                var minutes = d.getMinutes();
-                trainArrival.innerHTML = hours + ":" + minutes;
+                localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
+                trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
                 row.appendChild(trainArrival);
 
                 var trainDelay = document.createElement("td");
