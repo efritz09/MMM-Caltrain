@@ -203,7 +203,7 @@ Module.register("MMM-Caltrain", {
                 if (t.delay <= 0) {
                     trainDelay.innerHTML = "On Time";
                 } else {
-                    trainDelay.innerHTML = t.delay + " min";
+                    trainDelay.innerHTML = t.delay + " min late";
                 }
                 row.appendChild(trainDelay);
             }
