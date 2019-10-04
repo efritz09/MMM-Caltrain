@@ -164,9 +164,9 @@ Module.register("MMM-Caltrain", {
         // Generate the station's Northbound train status
         if (this.stationNorth.length > 0) {
             var northTable = this.createTrainTable(this.stationNorth);
-            var southHead = document.createElement("div");
-            southHead.className = "scheduleHeader";
-            southHead.innerHTML = "Northbound";
+            var northHead = document.createElement("div");
+            northHead.className = "scheduleHeader";
+            northHead.innerHTML = "Northbound";
             wrapper.appendChild(northHead);
             wrapper.appendChild(northTable);
         }
