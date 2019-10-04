@@ -75,6 +75,45 @@ Module.register("MMM-Caltrain", {
         this.sendSocketNotification("GetStationStatus", params);
     },
 
+    createTrainTable: function(trains) {
+        var table = document.createElement("table");
+        table.className = "small";
+        var row = document.createElement("tr");
+        for (var i = 0, len = trains.length; i < len; i++) {
+            var t = trains[i];
+            console.log("appending: ", t);
+            var row = document.createElement("tr");
+            table.appendChild(row);
+
+            var trainName = document.createElement("td");
+            trainName.className = "train";
+            trainName.innerHTML = t.train;
+            row.appendChild(trainName);
+
+            var trainLine = document.createElement("td");
+            trainLine.className = "line";
+            trainLine.innerHTML = t.line;
+            row.appendChild(trainLine);
+
+            var trainArrival = document.createElement("td");
+            trainArrival.className = "arrive";
+            var d = new Date(t.arrive);
+            localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
+            trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
+            row.appendChild(trainArrival);
+
+            var trainDelay = document.createElement("td");
+            trainDelay.className = "trainDelay";
+            if (t.delay <= 0) {
+                trainDelay.innerHTML = "On Time";
+            } else {
+                trainDelay.innerHTML = t.delay + " min late";
+            }
+            row.appendChild(trainDelay);
+        }
+        return table;
+    }
+
     // Override dom generator.
     getDom: function() {
     	Log.info("getDom");
@@ -126,41 +165,41 @@ Module.register("MMM-Caltrain", {
 
         // Generate the station's Northbound train status
         if (this.stationNorth.length > 0) {
-            var northTable = document.createElement("table");
-            northTable.className = "small";
-            for (var i = 0, len = this.stationNorth.length; i < len; i++) {
-                var t = this.stationNorth[i];
-                console.log("appending: ", t);
-                var row = document.createElement("tr");
-                northTable.appendChild(row);
+            // var northTable = document.createElement("table");
+            // northTable.className = "small";
+            // for (var i = 0, len = this.stationNorth.length; i < len; i++) {
+            //     var t = this.stationNorth[i];
+            //     console.log("appending: ", t);
+            //     var row = document.createElement("tr");
+            //     northTable.appendChild(row);
 
-                var trainName = document.createElement("td");
-                trainName.className = "train";
-                trainName.innerHTML = t.train;
-                row.appendChild(trainName);
+            //     var trainName = document.createElement("td");
+            //     trainName.className = "train";
+            //     trainName.innerHTML = t.train;
+            //     row.appendChild(trainName);
 
-                var trainLine = document.createElement("td");
-                trainLine.className = "line";
-                trainLine.innerHTML = t.line;
-                row.appendChild(trainLine);
+            //     var trainLine = document.createElement("td");
+            //     trainLine.className = "line";
+            //     trainLine.innerHTML = t.line;
+            //     row.appendChild(trainLine);
 
-                var trainArrival = document.createElement("td");
-                trainArrival.className = "arrive";
-                var d = new Date(t.arrive);
-                localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
-                trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
-                row.appendChild(trainArrival);
+            //     var trainArrival = document.createElement("td");
+            //     trainArrival.className = "arrive";
+            //     var d = new Date(t.arrive);
+            //     localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
+            //     trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
+            //     row.appendChild(trainArrival);
 
-                var trainDelay = document.createElement("td");
-                trainDelay.className = "trainDelay";
-                if (t.delay <= 0) {
-                    trainDelay.innerHTML = "On Time";
-                } else {
-                    trainDelay.innerHTML = t.delay + " min";
-                }
-                row.appendChild(trainDelay);
-            }
-
+            //     var trainDelay = document.createElement("td");
+            //     trainDelay.className = "trainDelay";
+            //     if (t.delay <= 0) {
+            //         trainDelay.innerHTML = "On Time";
+            //     } else {
+            //         trainDelay.innerHTML = t.delay + " min late";
+            //     }
+            //     row.appendChild(trainDelay);
+            // }
+            var northTable = this.createTrainTable(this.stationNorth);
             var northHead = document.createTextNode("Northbound");
             northHead.className = "small";
             wrapper.appendChild(northHead);
@@ -171,41 +210,42 @@ Module.register("MMM-Caltrain", {
         if (this.stationSouth.length > 0) {
             // might be best to split this up into two sections instead
             // then we can filter based on the config.direction
-            var southTable = document.createElement("table");
-            southTable.className = "small";
-            for (var i = 0, len = this.stationSouth.length; i < len; i++) {
-                var t = this.stationSouth[i];
-                console.log("appending: ", t);
-                var row = document.createElement("tr");
-                southTable.appendChild(row);
+            // var southTable = document.createElement("table");
+            // southTable.className = "small";
+            // for (var i = 0, len = this.stationSouth.length; i < len; i++) {
+            //     var t = this.stationSouth[i];
+            //     console.log("appending: ", t);
+            //     var row = document.createElement("tr");
+            //     southTable.appendChild(row);
 
-                var trainName = document.createElement("td");
-                trainName.className = "train";
-                trainName.innerHTML = t.train;
-                row.appendChild(trainName);
+            //     var trainName = document.createElement("td");
+            //     trainName.className = "train";
+            //     trainName.innerHTML = t.train;
+            //     row.appendChild(trainName);
 
-                var trainLine = document.createElement("td");
-                trainLine.className = "line";
-                trainLine.innerHTML = t.line;
-                row.appendChild(trainLine);
+            //     var trainLine = document.createElement("td");
+            //     trainLine.className = "line";
+            //     trainLine.innerHTML = t.line;
+            //     row.appendChild(trainLine);
 
-                var trainArrival = document.createElement("td");
-                trainArrival.className = "arrive";
-                var d = new Date(t.arrive);
-                localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
-                trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
-                row.appendChild(trainArrival);
+            //     var trainArrival = document.createElement("td");
+            //     trainArrival.className = "arrive";
+            //     var d = new Date(t.arrive);
+            //     localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
+            //     trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
+            //     row.appendChild(trainArrival);
 
-                var trainDelay = document.createElement("td");
-                trainDelay.className = "trainDelay";
-                if (t.delay <= 0) {
-                    trainDelay.innerHTML = "On Time";
-                } else {
-                    trainDelay.innerHTML = t.delay + " min late";
-                }
-                row.appendChild(trainDelay);
-            }
+            //     var trainDelay = document.createElement("td");
+            //     trainDelay.className = "trainDelay";
+            //     if (t.delay <= 0) {
+            //         trainDelay.innerHTML = "On Time";
+            //     } else {
+            //         trainDelay.innerHTML = t.delay + " min late";
+            //     }
+            //     row.appendChild(trainDelay);
+            // }
 
+            var southTable = this.createTrainTable(this.stationSouth);
             var southHead = document.createTextNode("Southbound");
             southHead.className = "small";
             wrapper.appendChild(southHead);
