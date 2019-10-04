@@ -57,7 +57,6 @@ module.exports = NodeHelper.create({
             options = self.buildGetStationStatus(parameters);
         }
 
-        self.sendSocketNotification("request params", options);
         request(options, function(err, resp, body) {
             if(!err && resp.statusCode == 200) {
                 if(resp.headers["content-encoding"] == "gzip") {
@@ -91,6 +90,7 @@ module.exports = NodeHelper.create({
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney;
+            self.sendSocketNotification("train", train);
             call = train.MonitoredCall;
             arrive = Date.parse(call.AimedArrivalTime);
             exp = Date.parse(call.ExpectedArrivalTime);
@@ -99,7 +99,7 @@ module.exports = NodeHelper.create({
 
             if ((exp - arrive) > delayThreshold) {
                 delayedTrains.push({
-                    train: trainRef,
+                    train: train.FramedVehicleJourneyRef.DatedVehicleJourneyRef,
                     stop: call.StopPointName.split(" Caltrain")[0],
                     dir: train.DirectionRef,
                     delay: Math.round((exp - arrive) / 1000 / 60),
@@ -123,9 +123,13 @@ module.exports = NodeHelper.create({
             arrive = Date.parse(call.AimedArrivalTime);
             exp = Date.parse(call.ExpectedArrivalTime);
             status = Math.round((exp - arrive) / 1000 / 60);
+            self.sendSocketNotification("train", train);
+
+            // Sometimes the api doesn't populate train.VehicleRef
+            trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
 
             stationStatus.push({
-                train: train.VehicleRef,
+                train: trainRef,
                 delay: status,
                 dir: train.DirectionRef,
                 line: train.LineRef,
@@ -161,7 +165,6 @@ module.exports = NodeHelper.create({
         // good to threshold this somewhere. Perhaps list the upcomming trains but
         // don't display the status until it's close to the station
         var stopCode = STATIONS[parameters.stationName][parameters.trainDirection];
-        this.sendSocketNotification("stopcode", stopCode)
         return {
             url: BASE_URL + "StopMonitoring",
             method: "GET",
