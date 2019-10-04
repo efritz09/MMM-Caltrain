@@ -1,12 +1,17 @@
-.train {
+/*.train {
   padding-left: 0;
   padding-right: 15px;
 }
 .time {
 	padding-right: 10px;
 	text-align: right;
-}
+}*/
 
 .warning {
 	color: #cc0000;
+}
+
+.scheduleHeader {
+	border-bottom: 1px solid #666;
+	font-size: 20px;
 }

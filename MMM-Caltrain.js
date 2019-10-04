@@ -59,7 +59,6 @@ Module.register("MMM-Caltrain", {
             trainDirection: "south",
             stationName: this.config.stationName,
         }
-        Log.info(params);
         this.sendSocketNotification("GetStationStatus", params);
     },
 
@@ -71,7 +70,6 @@ Module.register("MMM-Caltrain", {
             trainDirection: "north",
             stationName: this.config.stationName,
         }
-        Log.info(params);
         this.sendSocketNotification("GetStationStatus", params);
     },
 
@@ -112,7 +110,7 @@ Module.register("MMM-Caltrain", {
             row.appendChild(trainDelay);
         }
         return table;
-    }
+    },
 
     // Override dom generator.
     getDom: function() {
@@ -165,89 +163,20 @@ Module.register("MMM-Caltrain", {
 
         // Generate the station's Northbound train status
         if (this.stationNorth.length > 0) {
-            // var northTable = document.createElement("table");
-            // northTable.className = "small";
-            // for (var i = 0, len = this.stationNorth.length; i < len; i++) {
-            //     var t = this.stationNorth[i];
-            //     console.log("appending: ", t);
-            //     var row = document.createElement("tr");
-            //     northTable.appendChild(row);
-
-            //     var trainName = document.createElement("td");
-            //     trainName.className = "train";
-            //     trainName.innerHTML = t.train;
-            //     row.appendChild(trainName);
-
-            //     var trainLine = document.createElement("td");
-            //     trainLine.className = "line";
-            //     trainLine.innerHTML = t.line;
-            //     row.appendChild(trainLine);
-
-            //     var trainArrival = document.createElement("td");
-            //     trainArrival.className = "arrive";
-            //     var d = new Date(t.arrive);
-            //     localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
-            //     trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
-            //     row.appendChild(trainArrival);
-
-            //     var trainDelay = document.createElement("td");
-            //     trainDelay.className = "trainDelay";
-            //     if (t.delay <= 0) {
-            //         trainDelay.innerHTML = "On Time";
-            //     } else {
-            //         trainDelay.innerHTML = t.delay + " min late";
-            //     }
-            //     row.appendChild(trainDelay);
-            // }
             var northTable = this.createTrainTable(this.stationNorth);
-            var northHead = document.createTextNode("Northbound");
-            northHead.className = "small";
+            var southHead = document.createElement("div");
+            southHead.className = "scheduleHeader";
+            southHead.innerHTML = "Northbound";
             wrapper.appendChild(northHead);
             wrapper.appendChild(northTable);
         }
 
         // Generate the station's Southbound train status
         if (this.stationSouth.length > 0) {
-            // might be best to split this up into two sections instead
-            // then we can filter based on the config.direction
-            // var southTable = document.createElement("table");
-            // southTable.className = "small";
-            // for (var i = 0, len = this.stationSouth.length; i < len; i++) {
-            //     var t = this.stationSouth[i];
-            //     console.log("appending: ", t);
-            //     var row = document.createElement("tr");
-            //     southTable.appendChild(row);
-
-            //     var trainName = document.createElement("td");
-            //     trainName.className = "train";
-            //     trainName.innerHTML = t.train;
-            //     row.appendChild(trainName);
-
-            //     var trainLine = document.createElement("td");
-            //     trainLine.className = "line";
-            //     trainLine.innerHTML = t.line;
-            //     row.appendChild(trainLine);
-
-            //     var trainArrival = document.createElement("td");
-            //     trainArrival.className = "arrive";
-            //     var d = new Date(t.arrive);
-            //     localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
-            //     trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
-            //     row.appendChild(trainArrival);
-
-            //     var trainDelay = document.createElement("td");
-            //     trainDelay.className = "trainDelay";
-            //     if (t.delay <= 0) {
-            //         trainDelay.innerHTML = "On Time";
-            //     } else {
-            //         trainDelay.innerHTML = t.delay + " min late";
-            //     }
-            //     row.appendChild(trainDelay);
-            // }
-
             var southTable = this.createTrainTable(this.stationSouth);
-            var southHead = document.createTextNode("Southbound");
-            southHead.className = "small";
+            var southHead = document.createElement("div");
+            southHead.className = "scheduleHeader";
+            southHead.innerHTML = "Southbound";
             wrapper.appendChild(southHead);
             wrapper.appendChild(southTable);
         }
@@ -264,21 +193,15 @@ Module.register("MMM-Caltrain", {
     socketNotificationReceived: function(query, value) {
     	Log.info("socketNotificationReceived")
         if (query === "CheckForDelays") {
-        	Log.info("CheckForDelays");
             this.delays = value;
-            Log.info(value);
             this.loaded = true;
             this.updateDom();
         } else if (query === "GetNorthboundTrains") {
-            Log.info("GetNorthboundTrains");
             this.stationNorth = value;
-            Log.info(value);
             this.loaded = true;
             this.updateDom();
         } else if (query === "GetSouthboundTrains") {
-            Log.info("GetSouthboundTrains");
             this.stationSouth = value;
-            Log.info(value);
             this.loaded = true;
             this.updateDom();
         } else {
