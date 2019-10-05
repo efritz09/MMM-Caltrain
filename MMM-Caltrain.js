@@ -190,9 +190,9 @@ Module.register("MMM-Caltrain", {
         if (this.error != null) {
             console.log("inside error handler")
             // only error we have is a stationName error
-            var error = document.createElement("div");
+            var error = document.createElement("h3");
             error.innerHTML = "Invalid station name: " + this.config.stationName;
-            var errorMsg = document.createElement("div");
+            var errorMsg = document.createElement("h4");
             errorMsg.innerHTML = "You must enter a valid string. Refer to caltrain-stations.txt for a list of valid station names.";
             wrapper.appendChild(error);
             wrapper.appendChild(errorMsg);
@@ -202,6 +202,7 @@ Module.register("MMM-Caltrain", {
         }
         console.log("no error, moving on")
 
+        console.log(this.error);
         if (!this.loaded) {
             wrapper.innerHTML = "LOADING";
             wrapper.className = "dimmed light small";
@@ -210,6 +211,7 @@ Module.register("MMM-Caltrain", {
 
         // Generate the delays report
         if (this.delays.length > 0) {
+            console.log("gen delay report")
             if (this.config.showDelayWarning) {
                 var head = document.createElement("div");
                 head.innerHTML = "WARNING: Delays Reported";
@@ -225,6 +227,7 @@ Module.register("MMM-Caltrain", {
 
         // Generate the station's Northbound train status
         if (this.stationNorth.length > 0) {
+            console.log("gen northbound report")
             var northTable = this.createTrainTable(this.stationNorth);
             var northHead = document.createElement("div");
             northHead.className = "scheduleTitle";
@@ -235,6 +238,7 @@ Module.register("MMM-Caltrain", {
 
         // Generate the station's Southbound train status
         if (this.stationSouth.length > 0) {
+            console.log("gen southbound report")
             var southTable = this.createTrainTable(this.stationSouth);
             var southHead = document.createElement("div");
             southHead.className = "scheduleTitle";
