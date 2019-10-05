@@ -54,7 +54,12 @@ module.exports = NodeHelper.create({
         if(query === "CheckForDelays") {
             options = self.buildCheckForDelays(parameters);
         } else if(query === "GetStationStatus") {
-            options = self.buildGetStationStatus(parameters);
+            var stopCode = STATIONS[parameters.stationName][parameters.trainDirection];
+            if (stopCode == null) {
+                self.sendSocketNotification("ERROR", "stationName");
+                return;
+            }
+            options = self.buildGetStationStatus(parameters, stopCode);
         }
 
         request(options, function(err, resp, body) {
@@ -119,7 +124,6 @@ module.exports = NodeHelper.create({
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney;
             call = train.MonitoredCall;
-            // check these?
             arrive = Date.parse(call.AimedArrivalTime);
             exp = Date.parse(call.ExpectedArrivalTime);
             status = Math.round((exp - arrive) / 1000 / 60);
@@ -145,6 +149,7 @@ module.exports = NodeHelper.create({
         }
     },
 
+    // returns the request parameters to get delayed train status
     buildCheckForDelays: function(parameters) {
         return {
             url: BASE_URL + "StopMonitoring",
@@ -160,11 +165,8 @@ module.exports = NodeHelper.create({
         }
     },
 
-    buildGetStationStatus: function(parameters) {
-        // This can be inaccurate if the train is not set to arrive soon. It may be
-        // good to threshold this somewhere. Perhaps list the upcomming trains but
-        // don't display the status until it's close to the station
-        var stopCode = STATIONS[parameters.stationName][parameters.trainDirection];
+    // returns the request parameters to get station train status
+    buildGetStationStatus: function(parameters, stopCode) {
         return {
             url: BASE_URL + "StopMonitoring",
             method: "GET",

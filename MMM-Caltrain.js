@@ -5,12 +5,12 @@ Module.register("MMM-Caltrain", {
 	defaults: {
 		text: "Caltrain Monitor",
 		updateInterval: 600000, // 10 minutes
-        stationName: "", // should abstract this to a code?
+        stationName: "", // required 
         direction: "", // if unset, both directions
-        timeFormat: 24,
+        timeFormat: 24, // default 24 hour time
         delayThreshold: 600000, // 10 minutes
-        showDelayedTrains: true,
-        showDelayWarning: true,
+        showDelayedTrains: true, // if true, shows which trains are delayed
+        showDelayWarning: true, // if true, shows a warning when trains are delayd
 	},
 
 	start: function() {
@@ -40,11 +40,18 @@ Module.register("MMM-Caltrain", {
 		return ["MMM-Caltrain.css"];
 	},
 
+    getHeader: function() {
+        return "Caltrain Departure Time: " + this.config.stationName;
+    },
+
+    // Requests information on delayed trains across the fleet
     getDelayInfo: function() {
         Log.info("Requesting delay info");
         this.sendSocketNotification("CheckForDelays", this.config);
     },
 
+    // Requests information for trains arriving at a given station
+    // If no direction is chose, both directions are reported
     getStationInfo: function() {
     	Log.info("Requesting station info");
         if (this.config.direction.toLowerCase() === "south") {
@@ -52,12 +59,12 @@ Module.register("MMM-Caltrain", {
         } else if (this.config.direction.toLowerCase() === "north") {
             this.getNorthboundTrains();
         } else {
-            // request both north and south
             this.getNorthboundTrains();
             this.getSouthboundTrains();
         }
     },
 
+    // Requests southbound train information
     getSouthboundTrains: function() {
         Log.info("Requesting southbound info");
         var params = {
@@ -68,7 +75,7 @@ Module.register("MMM-Caltrain", {
         this.sendSocketNotification("GetStationStatus", params);
     },
 
-
+    // Requests northbound train information
     getNorthboundTrains: function() {
         Log.info("Requesting northbound info");
         var params = {
@@ -79,6 +86,7 @@ Module.register("MMM-Caltrain", {
         this.sendSocketNotification("GetStationStatus", params);
     },
 
+    // Creates the station train table
     createTrainTable: function(trains) {
         var table = document.createElement("table");
         table.className = "small";
@@ -140,6 +148,7 @@ Module.register("MMM-Caltrain", {
         return table;
     },
 
+    // Creates the delayed train table
     createDelayTable: function(trains) {
         var table = document.createElement("table");
         table.className = "small";
@@ -172,10 +181,23 @@ Module.register("MMM-Caltrain", {
         return table;
     },
 
-    // Override dom generator.
+    // Override dom generator
     getDom: function() {
     	Log.info("getDom");
         var wrapper = document.createElement("div");
+
+        console.log(this.error);
+        if (this.error) {
+            // only error we have is a stationName error
+            var error = document.createElement("div");
+            error.innerHTML = "Invalid station name: " + this.error;
+            var errorMsg = document.createElement("div");
+            errorMsg.innerHTML = "You must enter a valid string. Refer to caltrain-stations.txt for a list of valid station names.";
+            wrapper.appendChild(error);
+            wrapper.appendChild(errorMsg);
+            this.error = null;
+            return
+        }
 
         if (!this.loaded) {
             wrapper.innerHTML = "LOADING";
@@ -185,10 +207,12 @@ Module.register("MMM-Caltrain", {
 
         // Generate the delays report
         if (this.delays.length > 0) {
-            var head = document.createElement("legend")
-            head.innerHTML = "WARNING: Delays Reported";
-            head.className = "warning";
-            wrapper.appendChild(head);
+            if (this.config.showDelayWarning) {
+                var head = document.createElement("div");
+                head.innerHTML = "WARNING: Delays Reported";
+                head.className = "warning";
+                wrapper.appendChild(head);
+            }
 
             if (this.config.showDelayedTrains) {
                 var delayTable = this.createDelayTable(this.delays);
@@ -219,11 +243,6 @@ Module.register("MMM-Caltrain", {
         return wrapper;
     },
 
-    // Override get header function
-    getHeader: function() {
-        return "Caltrain Departure Time: " + this.config.stationName;
-    },
-
     // Override notification handler.
     socketNotificationReceived: function(query, value) {
     	Log.info("socketNotificationReceived")
@@ -239,6 +258,9 @@ Module.register("MMM-Caltrain", {
             this.stationSouth = value;
             this.loaded = true;
             this.updateDom();
+        } else if (query == "ERROR") {
+            this.error = value;
+            this.updateDom()            
         } else {
             // Everything else is a debug message
             Log.info(query);
