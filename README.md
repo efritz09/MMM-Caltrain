@@ -27,15 +27,15 @@ The `stationName` value must be one of those listed in [caltrain-stations.txt](c
 
 ### Other Optional Parameters
 
-| Option | Type | Default | Description |
-|---|---|---|---|---|
-| `delayThreshold` | integer | 600000 | Time in milliseconds that a train must be behind schedule by for it to be reported as "delayed". Default value is 10 minutes. |
-| `direction` | string | "" | Selects which trains to display for the given `stationName`. Acceptable values are `north` or `south`. Any other value will resolve to both north and south. Default value is both. |
-| `requestDelays` | bool | true | If true, requests delayed trains info. |
-| `showDelayedTrains` | bool | true | If true, shows which trains have been reported as delayed. |
-| `showDelayedWarning` | bool | true | If true, shows the warning message when delayed trains are detected. |
-| `timeFormat` | integer | 24 | The form of time notation that will be used. Possible values are `12` or `24`. |
-| `updateInterval` | integer | 180000 | Time in milliseconds between status updates. Default is 3 minutes. This number was chosen because the API limits 60 requests per hour, and each interval the module makes 3 requests. Be careful lowering this value unless you modify the other options to reduce the number of requests sent each interval. |
+| Option               | Type    | Default | Description                                                                                                                                                                                                                                                                                                   |
+|----------------------|---------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `delayThreshold`     | integer | 600000  | Time in milliseconds that a train must be behind schedule by for it to be reported as "delayed". Default value is 10 minutes.                                                                                                                                                                                 |
+| `direction`          | string  | ""      | Selects which trains to display for the given `stationName`. Acceptable values are `north` or `south`. Any other value will resolve to both north and south. Default value is both.                                                                                                                           |
+| `requestDelays`      | bool    | true    | If true, requests delayed trains info.                                                                                                                                                                                                                                                                        |
+| `showDelayedTrains`  | bool    | true    | If true, shows which trains have been reported as delayed.                                                                                                                                                                                                                                                    |
+| `showDelayedWarning` | bool    | true    | If true, shows the warning message when delayed trains are detected.                                                                                                                                                                                                                                          |
+| `timeFormat`         | integer | 24      | The form of time notation that will be used. Possible values are `12` or `24`.                                                                                                                                                                                                                                |
+| `updateInterval`     | integer | 180000  | Time in milliseconds between status updates. Default is 3 minutes. This number was chosen because the API limits 60 requests per hour, and each interval the module makes 3 requests. Be careful lowering this value unless you modify the other options to reduce the number of requests sent each interval. |
 
 Example configuration file: 
 ```
