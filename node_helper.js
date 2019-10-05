@@ -96,7 +96,7 @@ module.exports = NodeHelper.create({
         for (var i = 0, len = data.length; i < len; i++) {
             var train = data[i].MonitoredVehicleJourney;
             var call = train.MonitoredCall;
-            var delay = getDelay(call);
+            var delay = self.getDelay(call);
             // Sometimes the api doesn't populate train.VehicleRef
             var trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
 
@@ -122,7 +122,7 @@ module.exports = NodeHelper.create({
         for (var i = 0, len = data.length; i < len; i++) {
             var train = data[i].MonitoredVehicleJourney;
             var call = train.MonitoredCall;
-            var delay = getDelay(call);
+            var delay = self.getDelay(call);
             var status = Math.round(delay / 1000 / 60);
             // Sometimes the api doesn't populate train.VehicleRef
             var trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
@@ -132,7 +132,7 @@ module.exports = NodeHelper.create({
                 delay: status,
                 dir: train.DirectionRef,
                 line: train.LineRef,
-                arrive: call.AimedArrivalTime,
+                depart: call.AimedDepartureTime,
             });
         }
 

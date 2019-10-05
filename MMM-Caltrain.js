@@ -101,7 +101,7 @@ Module.register("MMM-Caltrain", {
         var trainLine = document.createElement("th");
         trainLine.innerHTML = "Line";
         var trainETA = document.createElement("th");
-        trainETA.innerHTML = "ETA";
+        trainETA.innerHTML = "Departing";
         var trainStatus = document.createElement("th");
         trainStatus.innerHTML = "Status";
 
@@ -127,12 +127,12 @@ Module.register("MMM-Caltrain", {
             trainLine.innerHTML = t.line;
             row.appendChild(trainLine);
 
-            var trainArrival = document.createElement("td");
-            trainArrival.className = "arrive";
-            var d = new Date(t.arrive);
+            var trainDepart = document.createElement("td");
+            trainDepart.className = "depart";
+            var d = new Date(t.depart);
             localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
-            trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
-            row.appendChild(trainArrival);
+            trainDepart.innerHTML = localTime[0] + ":" + localTime[1];
+            row.appendChild(trainDepart);
 
             var trainDelay = document.createElement("td");
             trainDelay.className = "trainDelay";
