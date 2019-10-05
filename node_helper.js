@@ -162,7 +162,7 @@ module.exports = NodeHelper.create({
 
         // The API can mess up the aimed arrival time. If the arrival time is
         // earlier than the current time, use the ExpectedDepartureTime
-        if arrival < now {
+        if (arrival < now) {
             arrival = Date.parse(call.AimedDepartureTime);
         }
 
