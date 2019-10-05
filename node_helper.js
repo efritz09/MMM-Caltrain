@@ -54,12 +54,12 @@ module.exports = NodeHelper.create({
         if(query === "CheckForDelays") {
             options = self.buildCheckForDelays(parameters);
         } else if(query === "GetStationStatus") {
-            var stopCode = STATIONS[parameters.stationName][parameters.trainDirection];
-            if (stopCode == null) {
+            var station = STATIONS[parameters.stationName];
+            if (station == null) {
                 self.sendSocketNotification("ERROR", "stationName");
                 return;
             }
-            options = self.buildGetStationStatus(parameters, stopCode);
+            options = self.buildGetStationStatus(parameters, station[parameters.trainDirection]);
         }
 
         request(options, function(err, resp, body) {

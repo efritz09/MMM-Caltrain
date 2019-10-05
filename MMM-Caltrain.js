@@ -195,6 +195,7 @@ Module.register("MMM-Caltrain", {
             errorMsg.innerHTML = "You must enter a valid string. Refer to caltrain-stations.txt for a list of valid station names.";
             wrapper.appendChild(error);
             wrapper.appendChild(errorMsg);
+            // reset the error
             this.error = null;
             return
         }
