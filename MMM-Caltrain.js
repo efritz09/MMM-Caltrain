@@ -210,7 +210,7 @@ Module.register("MMM-Caltrain", {
             console.log("gen delay report");
             if (this.config.showDelayWarning) {
                 var head = document.createElement("div");
-                head.innerHTML = "WARNING: Delays Reported";
+                head.innerHTML = "Delays Reported";
                 head.className = "warning";
                 wrapper.appendChild(head);
             }
