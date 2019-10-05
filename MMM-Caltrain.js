@@ -7,8 +7,10 @@ Module.register("MMM-Caltrain", {
 		updateInterval: 600000, // 10 minutes
         stationName: "", // should abstract this to a code?
         direction: "", // if unset, both directions
-        timeFormat: 12,
+        timeFormat: 24,
         delayThreshold: 600000, // 10 minutes
+        showDelayedTrains: true,
+        showDelayWarning: true,
 	},
 
 	start: function() {
@@ -20,12 +22,16 @@ Module.register("MMM-Caltrain", {
         this.stationNorth = [];
         this.stationSouth = [];
 
-		self.getDelayInfo();
+        if self.config.showDelayWarning {
+            self.getDelayInfo();            
+        }
 		self.getStationInfo();
 
 		// Schedule update timer.
 		setInterval(function() {
-			self.getDelayInfo();
+            if self.config.showDelayWarning {
+                self.getDelayInfo();            
+            }
 			self.getStationInfo();
 		}, self.config.updateInterval);
 	},
@@ -134,6 +140,38 @@ Module.register("MMM-Caltrain", {
         return table;
     },
 
+    createDelayTable: function(trains) {
+        var table = document.createElement("table");
+        table.className = "small";
+        for (var i = 0, len = trains.length; i < len; i++) {
+            var t = trains[i];
+            console.log("appending: ", t);
+            var row = document.createElement("tr");
+            table.appendChild(row);
+
+            var trainName = document.createElement("td");
+            trainName.className = "train";
+            trainName.innerHTML = t.train;
+            row.appendChild(trainName);
+
+            var trainDir = document.createElement("td");
+            trainDir.className = "trainDir";
+            trainDir.innerHTML = t.dir;
+            row.appendChild(trainDir);
+
+            var trainStop = document.createElement("td");
+            trainStop.className = "trainStop";
+            trainStop.innerHTML = t.stop;
+            row.appendChild(trainStop);
+
+            var trainDelay = document.createElement("td");
+            trainDelay.className = "trainDelay";
+            trainDelay.innerHTML = t.delay + " min late";
+            row.appendChild(trainDelay);
+        }
+        return table;
+    },
+
     // Override dom generator.
     getDom: function() {
     	Log.info("getDom");
@@ -152,35 +190,10 @@ Module.register("MMM-Caltrain", {
             head.className = "warning";
             wrapper.appendChild(head);
 
-            var table = document.createElement("table");
-            table.className = "small";
-            for (var i = 0, len = this.delays.length; i < len; i++) {
-                var t = this.delays[i];
-                console.log("appending: ", t);
-                var row = document.createElement("tr");
-                table.appendChild(row);
-
-                var trainName = document.createElement("td");
-                trainName.className = "train";
-                trainName.innerHTML = t.train;
-                row.appendChild(trainName);
-
-                var trainDir = document.createElement("td");
-                trainDir.className = "trainDir";
-                trainDir.innerHTML = t.dir;
-                row.appendChild(trainDir);
-
-                var trainStop = document.createElement("td");
-                trainStop.className = "trainStop";
-                trainStop.innerHTML = t.stop;
-                row.appendChild(trainStop);
-
-                var trainDelay = document.createElement("td");
-                trainDelay.className = "trainDelay";
-                trainDelay.innerHTML = t.delay + " min late";
-                row.appendChild(trainDelay);
+            if this.config.showDelayedTrains {
+                var delayTable = this.createDelayTable(this.delays);
+                wrapper.appendChild(delayTable);
             }
-            wrapper.appendChild(table);
         }
 
         // Generate the station's Northbound train status
