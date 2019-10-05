@@ -1,9 +1,9 @@
 
 Module.register("MMM-Caltrain", {
 
-	// Default config
-	defaults: {
-		text: "Caltrain Monitor",
+    // Default config
+    defaults: {
+        text: "Caltrain Monitor",
         delayThreshold: 600000, // 10 minutes
         direction: "", // if unset, both directions
         requestDelays: true,
@@ -11,10 +11,10 @@ Module.register("MMM-Caltrain", {
         showDelayWarning: true, // if true, shows a warning when trains are delayd
         timeFormat: 24, // default 24 hour time
         updateInterval: 180000, // 3 minutes
-	},
+    },
 
-	start: function() {
-		Log.info("starting module: " + this.name);
+    start: function() {
+        Log.info("starting module: " + this.name);
         var self = this;
 
         this.loaded = false;
@@ -25,20 +25,20 @@ Module.register("MMM-Caltrain", {
         if (self.config.requestDelays) {
             self.getDelayInfo();            
         }
-		self.getStationInfo();
+        self.getStationInfo();
 
-		// Schedule update timer.
-		setInterval(function() {
+        // Schedule update timer.
+        setInterval(function() {
             if (self.config.requestDelays) {
                 self.getDelayInfo();            
             }
-			self.getStationInfo();
-		}, self.config.updateInterval);
-	},
+            self.getStationInfo();
+        }, self.config.updateInterval);
+    },
 
-	getStyles: function() {
-		return ["MMM-Caltrain.css"];
-	},
+    getStyles: function() {
+        return ["MMM-Caltrain.css"];
+    },
 
     getHeader: function() {
         return "Caltrain Departure Time: " + this.config.stationName;
@@ -53,7 +53,7 @@ Module.register("MMM-Caltrain", {
     // Requests information for trains arriving at a given station
     // If no direction is chose, both directions are reported
     getStationInfo: function() {
-    	Log.info("Requesting station info");
+        Log.info("Requesting station info");
         if (this.config.direction.toLowerCase() === "south") {
             this.getSouthboundTrains();
         } else if (this.config.direction.toLowerCase() === "north") {
@@ -181,7 +181,7 @@ Module.register("MMM-Caltrain", {
 
     // Override dom generator
     getDom: function() {
-    	Log.info("getDom");
+        Log.info("getDom");
         var wrapper = document.createElement("div");
 
         if (this.error != null) {
@@ -242,7 +242,7 @@ Module.register("MMM-Caltrain", {
 
     // Override notification handler.
     socketNotificationReceived: function(query, value) {
-    	Log.info("socketNotificationReceived")
+        Log.info("socketNotificationReceived")
         if (query === "CheckForDelays") {
             this.delays = value;
             this.loaded = true;
