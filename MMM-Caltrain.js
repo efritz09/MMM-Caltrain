@@ -187,10 +187,11 @@ Module.register("MMM-Caltrain", {
         var wrapper = document.createElement("div");
 
         console.log(this.error);
-        if (this.error) {
+        if (this.error != null) {
+            console.log("inside error handler")
             // only error we have is a stationName error
             var error = document.createElement("div");
-            error.innerHTML = "Invalid station name: " + this.error;
+            error.innerHTML = "Invalid station name: " + this.config.stationName;
             var errorMsg = document.createElement("div");
             errorMsg.innerHTML = "You must enter a valid string. Refer to caltrain-stations.txt for a list of valid station names.";
             wrapper.appendChild(error);
@@ -199,6 +200,7 @@ Module.register("MMM-Caltrain", {
             this.error = null;
             return
         }
+        console.log("no error, moving on")
 
         if (!this.loaded) {
             wrapper.innerHTML = "LOADING";
