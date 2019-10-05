@@ -52,8 +52,11 @@ Example configuration file:
 
 ### Screenshots
 
+#### Normal operating conditions
 ![Normal station status](screenshots/normal.png)
 
+#### Delayed trains detected (with all delay options set to true)
 ![Delays detected](screenshots/delays.png)
 
+#### Bad stationName string
 ![Bad station name](screenshots/error.png)
