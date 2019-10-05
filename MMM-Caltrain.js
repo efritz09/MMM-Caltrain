@@ -97,6 +97,7 @@ Module.register("MMM-Caltrain", {
         head.appendChild(trainStatus);
 
         var body = document.createElement("tbody")
+        body.className = "scheduleBody"
         for (var i = 0, len = trains.length; i < len; i++) {
             var t = trains[i];
             console.log("appending: ", t);
