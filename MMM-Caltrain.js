@@ -186,23 +186,19 @@ Module.register("MMM-Caltrain", {
     	Log.info("getDom");
         var wrapper = document.createElement("div");
 
-        console.log(this.error);
         if (this.error != null) {
             console.log("inside error handler")
             // only error we have is a stationName error
-            var error = document.createElement("h3");
+            var error = document.createElement("div");
             error.innerHTML = "Invalid station name: " + this.config.stationName;
-            var errorMsg = document.createElement("h4");
+            var errorMsg = document.createElement("div");
+            errorMsg.className = "small";
             errorMsg.innerHTML = "You must enter a valid string. Refer to caltrain-stations.txt for a list of valid station names.";
             wrapper.appendChild(error);
             wrapper.appendChild(errorMsg);
-            // reset the error
-            this.error = null;
-            return
+            return wrapper;
         }
-        console.log("no error, moving on")
 
-        console.log(this.error);
         if (!this.loaded) {
             wrapper.innerHTML = "LOADING";
             wrapper.className = "dimmed light small";
@@ -211,7 +207,7 @@ Module.register("MMM-Caltrain", {
 
         // Generate the delays report
         if (this.delays.length > 0) {
-            console.log("gen delay report")
+            console.log("gen delay report");
             if (this.config.showDelayWarning) {
                 var head = document.createElement("div");
                 head.innerHTML = "WARNING: Delays Reported";
@@ -227,7 +223,7 @@ Module.register("MMM-Caltrain", {
 
         // Generate the station's Northbound train status
         if (this.stationNorth.length > 0) {
-            console.log("gen northbound report")
+            console.log("gen northbound report");
             var northTable = this.createTrainTable(this.stationNorth);
             var northHead = document.createElement("div");
             northHead.className = "scheduleTitle";
@@ -238,7 +234,7 @@ Module.register("MMM-Caltrain", {
 
         // Generate the station's Southbound train status
         if (this.stationSouth.length > 0) {
-            console.log("gen southbound report")
+            console.log("gen southbound report");
             var southTable = this.createTrainTable(this.stationSouth);
             var southHead = document.createElement("div");
             southHead.className = "scheduleTitle";
