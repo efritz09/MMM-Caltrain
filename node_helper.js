@@ -132,7 +132,7 @@ module.exports = NodeHelper.create({
                 delay: status,
                 dir: train.DirectionRef,
                 line: train.LineRef,
-                depart: call.AimedDepartureTime,
+                arrive: call.AimedArrivalTime,
             });
         }
 
