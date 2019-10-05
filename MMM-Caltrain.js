@@ -4,13 +4,13 @@ Module.register("MMM-Caltrain", {
 	// Default config
 	defaults: {
 		text: "Caltrain Monitor",
-		updateInterval: 600000, // 10 minutes
-        stationName: "", // required 
-        direction: "", // if unset, both directions
-        timeFormat: 24, // default 24 hour time
         delayThreshold: 600000, // 10 minutes
+        direction: "", // if unset, both directions
+        requestDelays: true,
         showDelayedTrains: true, // if true, shows which trains are delayed
         showDelayWarning: true, // if true, shows a warning when trains are delayd
+        timeFormat: 24, // default 24 hour time
+        updateInterval: 180000, // 3 minutes
 	},
 
 	start: function() {
@@ -22,14 +22,14 @@ Module.register("MMM-Caltrain", {
         this.stationNorth = [];
         this.stationSouth = [];
 
-        if (self.config.showDelayWarning) {
+        if (self.config.requestDelays) {
             self.getDelayInfo();            
         }
 		self.getStationInfo();
 
 		// Schedule update timer.
 		setInterval(function() {
-            if (self.config.showDelayWarning) {
+            if (self.config.requestDelays) {
                 self.getDelayInfo();            
             }
 			self.getStationInfo();

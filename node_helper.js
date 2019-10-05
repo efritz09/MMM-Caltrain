@@ -1,5 +1,5 @@
-var request = require("request")
 var NodeHelper = require("node_helper")
+var request = require("request")
 var zlib = require("zlib")
 
 const BASE_URL = "http://api.511.org/transit/"
