@@ -95,7 +95,6 @@ module.exports = NodeHelper.create({
         data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
         for (var i = 0, len = data.length; i < len; i++) {
             train = data[i].MonitoredVehicleJourney;
-            self.sendSocketNotification("train", train);
             call = train.MonitoredCall;
             arrive = Date.parse(call.AimedArrivalTime);
             exp = Date.parse(call.ExpectedArrivalTime);
@@ -127,7 +126,6 @@ module.exports = NodeHelper.create({
             arrive = Date.parse(call.AimedArrivalTime);
             exp = Date.parse(call.ExpectedArrivalTime);
             status = Math.round((exp - arrive) / 1000 / 60);
-            self.sendSocketNotification("train", train);
 
             // Sometimes the api doesn't populate train.VehicleRef
             trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
