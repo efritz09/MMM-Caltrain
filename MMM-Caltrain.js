@@ -22,14 +22,14 @@ Module.register("MMM-Caltrain", {
         this.stationNorth = [];
         this.stationSouth = [];
 
-        if self.config.showDelayWarning {
+        if (self.config.showDelayWarning) {
             self.getDelayInfo();            
         }
 		self.getStationInfo();
 
 		// Schedule update timer.
 		setInterval(function() {
-            if self.config.showDelayWarning {
+            if (self.config.showDelayWarning) {
                 self.getDelayInfo();            
             }
 			self.getStationInfo();
@@ -190,7 +190,7 @@ Module.register("MMM-Caltrain", {
             head.className = "warning";
             wrapper.appendChild(head);
 
-            if this.config.showDelayedTrains {
+            if (this.config.showDelayedTrains) {
                 var delayTable = this.createDelayTable(this.delays);
                 wrapper.appendChild(delayTable);
             }
