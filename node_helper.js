@@ -91,22 +91,21 @@ module.exports = NodeHelper.create({
     checkForDelaysCallback: function(data, delayThreshold) {
         var self = this;
         var delayedTrains = [];
-        json = JSON.parse(data);
-        data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
+        var json = JSON.parse(data);
+        var data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
         for (var i = 0, len = data.length; i < len; i++) {
-            train = data[i].MonitoredVehicleJourney;
-            call = train.MonitoredCall;
-            arrive = Date.parse(call.AimedArrivalTime);
-            exp = Date.parse(call.ExpectedArrivalTime);
+            var train = data[i].MonitoredVehicleJourney;
+            var call = train.MonitoredCall;
+            var delay = getDelay(call);
             // Sometimes the api doesn't populate train.VehicleRef
-            trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
+            var trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
 
-            if ((exp - arrive) > delayThreshold) {
+            if (delay > delayThreshold) {
                 delayedTrains.push({
                     train: train.FramedVehicleJourneyRef.DatedVehicleJourneyRef,
                     stop: call.StopPointName.split(" Caltrain")[0],
                     dir: train.DirectionRef,
-                    delay: Math.round((exp - arrive) / 1000 / 60),
+                    delay: Math.round(delay / 1000 / 60),
                 });
             }
         }
@@ -118,17 +117,15 @@ module.exports = NodeHelper.create({
     getStationStatusCallback: function(data, direction) {
         var self = this;
         stationStatus = [];
-        json = JSON.parse(data);
-        data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit;
+        var json = JSON.parse(data);
+        var data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit;
         for (var i = 0, len = data.length; i < len; i++) {
-            train = data[i].MonitoredVehicleJourney;
-            call = train.MonitoredCall;
-            arrive = Date.parse(call.AimedArrivalTime);
-            exp = Date.parse(call.ExpectedArrivalTime);
-            status = Math.round((exp - arrive) / 1000 / 60);
-
+            var train = data[i].MonitoredVehicleJourney;
+            var call = train.MonitoredCall;
+            var delay = getDelay(call);
+            var status = Math.round(delay / 1000 / 60);
             // Sometimes the api doesn't populate train.VehicleRef
-            trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
+            var trainRef = train.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
 
             stationStatus.push({
                 train: trainRef,
@@ -145,6 +142,31 @@ module.exports = NodeHelper.create({
         } else if (direction === "north") {
             self.sendSocketNotification("GetNorthboundTrains", stationStatus);
         }
+    },
+
+    getDelay: function(call) {
+        /* The caltrain API can do some stupid stuff. For instance:
+        {
+            "AimedArrivalTime": "2019-10-05T00:05:00Z",
+            "ExpectedArrivalTime": "2019-10-05T23:48:46Z",
+            "AimedDepartureTime": "2019-10-06T00:05:00Z",
+            "ExpectedDepartureTime": "2019-10-06T00:05:00Z",
+        }
+
+        In this case, the AimedArrivalTime didn't increment the day when it
+        went over 23:59, so now we have to deal with that.
+        */
+        var arrival = Date.parse(call.AimedArrivalTime);
+        var exp = Date.parse(call.ExpectedArrivalTime);
+        var now = Date.now();
+
+        // The API can mess up the aimed arrival time. If the arrival time is
+        // earlier than the current time, use the ExpectedDepartureTime
+        if arrival < now {
+            arrival = Date.parse(call.AimedDepartureTime);
+        }
+
+        return exp - arrival
     },
 
     // returns the request parameters to get delayed train status
