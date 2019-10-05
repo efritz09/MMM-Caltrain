@@ -76,12 +76,32 @@ Module.register("MMM-Caltrain", {
     createTrainTable: function(trains) {
         var table = document.createElement("table");
         table.className = "small";
-        var row = document.createElement("tr");
+
+        table.appendChild(document.createElement("thead"));
+        var head = document.createElement("tr");
+        head.className = "scheduleHeader"
+        table.appendChild(head);
+        
+        var trainNum = document.createElement("th");
+        trainNum.innerHTML = "Train";
+        var trainLine = document.createElement("th");
+        trainLine.innerHTML = "Line";
+        var trainETA = document.createElement("th");
+        trainETA.innerHTML = "ETA";
+        var trainStatus = document.createElement("th");
+        trainStatus.innerHTML = "Status";
+
+        head.appendChild(trainNum);
+        head.appendChild(trainLine);
+        head.appendChild(trainETA);
+        head.appendChild(trainStatus);
+
+        var body = document.createElement("tbody")
         for (var i = 0, len = trains.length; i < len; i++) {
             var t = trains[i];
             console.log("appending: ", t);
             var row = document.createElement("tr");
-            table.appendChild(row);
+            body.appendChild(row);
 
             var trainName = document.createElement("td");
             trainName.className = "train";
@@ -109,6 +129,7 @@ Module.register("MMM-Caltrain", {
             }
             row.appendChild(trainDelay);
         }
+        table.appendChild(body);
         return table;
     },
 
@@ -165,7 +186,7 @@ Module.register("MMM-Caltrain", {
         if (this.stationNorth.length > 0) {
             var northTable = this.createTrainTable(this.stationNorth);
             var northHead = document.createElement("div");
-            northHead.className = "scheduleHeader";
+            northHead.className = "scheduleTitle";
             northHead.innerHTML = "Northbound";
             wrapper.appendChild(northHead);
             wrapper.appendChild(northTable);
@@ -175,7 +196,7 @@ Module.register("MMM-Caltrain", {
         if (this.stationSouth.length > 0) {
             var southTable = this.createTrainTable(this.stationSouth);
             var southHead = document.createElement("div");
-            southHead.className = "scheduleHeader";
+            southHead.className = "scheduleTitle";
             southHead.innerHTML = "Southbound";
             wrapper.appendChild(southHead);
             wrapper.appendChild(southTable);
