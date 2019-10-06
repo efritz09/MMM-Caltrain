@@ -1,0 +1,16 @@
+.warning {
+    color: #cc0000;
+}
+
+.scheduleTitle {
+    border-bottom: 1px solid #666;
+    font-size: 20px;
+}
+
+.scheduleHeader {
+    font-size: 15px;
+}
+
+.scheduleBody {
+    font-size: 15px;
+}
