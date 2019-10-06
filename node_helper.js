@@ -92,7 +92,7 @@ module.exports = NodeHelper.create({
         var self = this;
         var delayedTrains = [];
         var json = JSON.parse(data);
-        var data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit
+        var data = json.ServiceDelivery.StopMonitoringDelivery.MonitoredStopVisit;
         for (var i = 0, len = data.length; i < len; i++) {
             var train = data[i].MonitoredVehicleJourney;
             var call = train.MonitoredCall;

@@ -257,7 +257,7 @@ Module.register("MMM-Caltrain", {
             this.updateDom();
         } else if (query == "ERROR") {
             this.error = value;
-            this.updateDom()            
+            this.updateDom();
         } else {
             // Everything else is a debug message
             Log.info(query);
