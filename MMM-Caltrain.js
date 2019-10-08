@@ -135,11 +135,16 @@ Module.register("MMM-Caltrain", {
             row.appendChild(trainArrival);
 
             var trainDelay = document.createElement("td");
-            trainDelay.className = "trainDelay";
             if (t.delay <= 0) {
                 trainDelay.innerHTML = "On Time";
+                trainDelay.className = "onTime";
             } else {
                 trainDelay.innerHTML = t.delay + " min late";
+                if (t.delay > 10) {
+                    trainDelay.className = "majorDelay";
+                } else {
+                    trainDelay.className = "delayed";
+                }
             }
             row.appendChild(trainDelay);
         }
