@@ -15,6 +15,11 @@
     font-size: 15px;
 }
 
+.highlightTrain {
+    color: #66ccff;
+    font-weight: bold;
+}
+
 .onTime {
     color: #00e400;
 }

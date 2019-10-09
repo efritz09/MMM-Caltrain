@@ -10,6 +10,7 @@ Module.register("MMM-Caltrain", {
         showDelayedTrains: true, // if true, shows which trains are delayed
         showDelayWarning: true, // if true, shows a warning when trains are delayd
         timeFormat: 24, // default 24 hour time
+        trains: [], // list of trains to bolden
         updateInterval: 180000, // 3 minutes
     },
 
@@ -115,6 +116,9 @@ Module.register("MMM-Caltrain", {
         for (var i = 0, len = trains.length; i < len; i++) {
             var t = trains[i];
             var row = document.createElement("tr");
+            if (this.config.trains.includes(t.train)) {
+                row.className = "highlightTrain";
+            }
             body.appendChild(row);
 
             var trainName = document.createElement("td");
