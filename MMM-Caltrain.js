@@ -116,7 +116,7 @@ Module.register("MMM-Caltrain", {
         for (var i = 0, len = trains.length; i < len; i++) {
             var t = trains[i];
             var row = document.createElement("tr");
-            if (this.config.trains.includes(t.train)) {
+            if (this.config.trains.includes(Number(t.train))) {
                 row.className = "highlightTrain";
             }
             body.appendChild(row);
