@@ -58,6 +58,9 @@ Example configuration file:
 #### Normal operating conditions
 ![Normal station status](screenshots/normal.png)
 
+#### Normal operation with trains defined 
+![train highlights](screenshots/trainHighlighting.png)
+
 #### Delayed trains detected (with all delay options set to true)
 ![Delays detected](screenshots/delays.png)
 
