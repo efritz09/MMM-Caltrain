@@ -14,3 +14,20 @@
 .scheduleBody {
     font-size: 15px;
 }
+
+.highlightTrain {
+    color: #66ccff;
+    font-weight: bold;
+}
+
+.onTime {
+    color: #00e400;
+}
+
+.delayed {
+    color: #cc6600;
+}
+
+.majorDelay {
+    color: #cc0000;
+}
