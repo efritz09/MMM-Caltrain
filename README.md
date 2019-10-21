@@ -4,16 +4,19 @@ This is a module for <strong>MagicMirror</strong><br>
 https://magicmirror.builders/<br>
 https://github.com/MichMich/MagicMirror
 
-
 A transportation module that displays the status of upcoming trains for a user defined station, as well as alerting the user when there have been delays reported across the fleet.
 
 This module uses the public API provided by [511.org](https://511.org/).
 
+### Module Status
+
+This module is considered finished, though I welcome any feedback on design or feature requests. I will be maintaining it for the foreseeable future. This was my first project using javascript so there are undoubtedly inefficiencies. 
+
 ### Installation
+
 1. Navigate to your magic mirror modules directory and clone this repo:
 `git clone https://github.com/efritz09/MMM-Caltrain.git`
 2. Navigate into the `MMM-Caltrain` directory, run `npm install request zlib`
-
 
 ### Configuration
 
