@@ -10,7 +10,7 @@ Module.register("MMM-Caltrain", {
         showDelayedTrains: true, // if true, shows which trains are delayed
         showDelayWarning: true, // if true, shows a warning when trains are delayd
         timeFormat: 24, // default 24 hour time
-        trains: {"287": "#66ccff", "282": "#d9b3ff"}, // list of trains to bolden
+        trains: {}, // list of trains to highlight
         updateInterval: 180000, // 3 minutes
     },
 
