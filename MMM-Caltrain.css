@@ -3,7 +3,7 @@
 }
 
 .scheduleTitle {
-    border-bottom: 1px solid #666;
+    border-bottom: 1px solid rgba(102, 102, 102, .5);
     font-size: 20px;
 }
 
@@ -30,4 +30,20 @@
 
 .majorDelay {
     color: #cc0000;
+}
+
+.colTrain {
+    width: 20%;
+}
+
+.colLine {
+    width: 25%;
+}
+
+.colEta {
+    width: 20%;
+}
+
+.colStatus {
+    width: 35%;
 }
