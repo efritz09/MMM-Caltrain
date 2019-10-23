@@ -120,9 +120,12 @@ Module.register("MMM-Caltrain", {
         for (var i = 0, len = trains.length; i < len; i++) {
             var t = trains[i];
             var row = document.createElement("tr");
-            if (this.config.trains[t.train] !== undefined) {
+            var highlightTrain = this.config.trains[t.train];
+            if (highlightTrain !== undefined) {
                 row.className = "highlightTrain";
-                row.style.color = this.config.trains[t.train]
+                if (highlightTrain != "") {
+                    row.style.color = this.config.trains[t.train]                    
+                }
             }
             body.appendChild(row);
 
