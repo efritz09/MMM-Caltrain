@@ -10,7 +10,7 @@ Module.register("MMM-Caltrain", {
         showDelayedTrains: true, // if true, shows which trains are delayed
         showDelayWarning: true, // if true, shows a warning when trains are delayd
         timeFormat: 24, // default 24 hour time
-        trains: [], // list of trains to bolden
+        trains: {"287": "#66ccff", "282": "#d9b3ff"}, // list of trains to bolden
         updateInterval: 180000, // 3 minutes
     },
 
@@ -120,23 +120,21 @@ Module.register("MMM-Caltrain", {
         for (var i = 0, len = trains.length; i < len; i++) {
             var t = trains[i];
             var row = document.createElement("tr");
-            if (this.config.trains.includes(Number(t.train))) {
+            if (this.config.trains[t.train] !== undefined) {
                 row.className = "highlightTrain";
+                row.style.color = this.config.trains[t.train]
             }
             body.appendChild(row);
 
             var trainName = document.createElement("td");
-            // trainName.className = "train";
             trainName.innerHTML = t.train;
             row.appendChild(trainName);
 
             var trainLine = document.createElement("td");
-            // trainLine.className = "line";
             trainLine.innerHTML = t.line;
             row.appendChild(trainLine);
 
             var trainArrival = document.createElement("td");
-            // trainArrival.className = "arrive";
             var d = new Date(t.arrive);
             localTime = d.toLocaleTimeString('en-US', {hour12: this.config.timeFormat == 12}).split(":")
             trainArrival.innerHTML = localTime[0] + ":" + localTime[1];
@@ -170,22 +168,18 @@ Module.register("MMM-Caltrain", {
             table.appendChild(row);
 
             var trainName = document.createElement("td");
-            // trainName.className = "train";
             trainName.innerHTML = t.train;
             row.appendChild(trainName);
 
             var trainDir = document.createElement("td");
-            // trainDir.className = "trainDir";
             trainDir.innerHTML = t.dir;
             row.appendChild(trainDir);
 
             var trainStop = document.createElement("td");
-            // trainStop.className = "trainStop";
             trainStop.innerHTML = t.stop;
             row.appendChild(trainStop);
 
             var trainDelay = document.createElement("td");
-            // trainDelay.className = "trainDelay";
             trainDelay.innerHTML = t.delay + " min late";
             row.appendChild(trainDelay);
         }
