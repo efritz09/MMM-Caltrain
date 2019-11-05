@@ -4,6 +4,8 @@ var zlib = require("zlib")
 
 const BASE_URL = "http://api.511.org/transit/"
 
+const CALTRAIN_BAD_DATA_DST_OFFSET = 60 * 60 * 1000 // 60 minutes (in milliseconds)
+
 // uncertain if it always holds true that 1 is north and 2 is south
 const STATIONS = {
     "22nd Street": {"north": 70021, "south": 70022},
@@ -152,9 +154,21 @@ module.exports = NodeHelper.create({
             "AimedDepartureTime": "2019-10-06T00:05:00Z",
             "ExpectedDepartureTime": "2019-10-06T00:05:00Z",
         }
-
         In this case, the AimedArrivalTime didn't increment the day when it
         went over 23:59, so now we have to deal with that.
+
+        It has also done this, when DST ended. The Aimed times are using DST
+        and the Expected are not.
+        {
+            "AimedArrivalTime": "2019-11-05T01:49:00Z",
+            "ExpectedArrivalTime": "2019-11-05T02:47:46Z",
+            "AimedDepartureTime": "2019-11-05T01:49:00Z",
+            "ExpectedDepartureTime": "2019-11-05T02:49:00Z",
+        }
+        In this case, if the AimedDepartureTime is before the current time,
+        we can add 1 hour to it, and assume that they've borked the API data.
+        This may come up again when DST goes back into effect.
+
         */
         var arrival = Date.parse(call.AimedArrivalTime);
         var exp = Date.parse(call.ExpectedArrivalTime);
@@ -164,6 +178,13 @@ module.exports = NodeHelper.create({
         // earlier than the current time, use the ExpectedDepartureTime
         if (arrival < now) {
             arrival = Date.parse(call.AimedDepartureTime);
+        }
+
+        // If the expected arrival and departure times are earlier than the
+        // current time, assume the DST offset needs to be added to exp
+        var expDepart = Date.parse(call.ExpectedDepartureTime);
+        if (expDepart < now && exp < now) {
+            exp += CALTRAIN_BAD_DATA_DST_OFFSET;
         }
 
         return exp - arrival
